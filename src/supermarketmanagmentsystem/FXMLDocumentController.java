@@ -110,7 +110,7 @@ public class FXMLDocumentController implements Initializable {
                 prepare.setString (2, password); 
                 result = prepare.executeQuery(); 
                 if (result.next()) {
-                    alert = new Alert(AlertType.ERROR);
+                    alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Information Message");
                     alert.setHeaderText(null); 
                     alert.setContentText("Sucessfully Login!"); 

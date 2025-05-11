@@ -5,8 +5,17 @@
 package supermarketmanagmentsystem;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,9 +32,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  *
@@ -105,7 +116,7 @@ public class adminDashboardController implements Initializable {
     private Label dashboard_totalIncome;
 
     @FXML
-    private TableColumn<?, ?> addProducts__col_status;
+    private TableColumn<productData, String> addProducts__col_status;
 
     @FXML
     private ComboBox<?> employees_gender;
@@ -117,10 +128,10 @@ public class adminDashboardController implements Initializable {
     private Button addProducts_clearBtn;
 
     @FXML
-    private TableColumn<?, ?> addProducts_col_productID;
+    private TableColumn<productData, String> addProducts_col_productID;
 
     @FXML
-    private TableColumn<?, ?> addProducts__col_productName;
+    private TableColumn<productData, String> addProducts__col_productName;
 
     @FXML
     private Button addProducts_btn;
@@ -138,10 +149,10 @@ public class adminDashboardController implements Initializable {
     private Button logout;
 
     @FXML
-    private TableView<?> addProducts_tableView;
+    private TableView<productData> addProducts_tableView;
 
     @FXML
-    private TableColumn<?, ?> addProducts_col_price;
+    private TableColumn<productData, Double> addProducts_col_price;
 
     @FXML
     private TextField addProducts_brandName;
@@ -165,7 +176,7 @@ public class adminDashboardController implements Initializable {
     private TableColumn<?, ?> employees_col_lastName;
 
     @FXML
-    private TableColumn<?, ?> addProducts_col_brandName;
+    private TableColumn<productData, String> addProducts_col_brandName;
 
     @FXML
     private TextField addProducts_price;
@@ -232,6 +243,217 @@ public class adminDashboardController implements Initializable {
     private double x = 0;
     private double y = 0;
 
+    private Connection connect;
+    private PreparedStatement prepare;
+    private Statement statement;
+    private ResultSet result;
+
+    //table for products
+   /* public void addProductsAdd() {
+        String insertProduct = "INSERT INTO product "
+                + " (product_id, brand, product_name, status, price) "
+                + "VALUES (?, ?, ?, ?, ?) ";
+        connect = database.connectDb();
+        try {
+            Alert alert;
+            //CHECK IF EMPTY /validate emptyfields first
+            if (addProducts_productID.getText().isEmpty() || addProducts_brandName.getText().isEmpty()
+                    || addProducts_productName.getText().isEmpty()
+                    || addProducts_status.getSelectionModel().getSelectedItem() == null
+                    || addProducts_price.getText().isEmpty()) {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all blank fields");
+                alert.showAndWait();
+
+            } else {
+                String check = "SELECT product_id FROM  product WHERE product_id = ?";
+                statement = connect.createStatement();
+                result = statement.executeQuery(check);
+                //if if product id is same ,block
+                if (result.next()) {
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Product ID" + addProducts_productID.getText() + "was already exist!");
+                    alert.showAndWait();
+                } else {
+                    prepare = connect.prepareStatement(insertProduct);
+                    prepare.setString(1, addProducts_productID.getText());
+                    prepare.setString(2, addProducts_brandName.getText());
+                    prepare.setString(3, addProducts_productName.getText());
+                    prepare.setString(4, (String) addProducts_status.getSelectionModel().getSelectedItem());
+
+                    try {
+                        prepare.setDouble(5, Double.parseDouble(addProducts_price.getText()));
+                    } catch (NumberFormatException e) {
+                        alert = new Alert(AlertType.ERROR);
+                        alert.setContentText("Invalid price format");
+                        alert.showAndWait();
+                        return;
+                    }
+                    result = prepare.executeQuery();
+
+                    prepare.executeUpdate();
+                    alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Sucessfully Added!");
+                    alert.showAndWait();
+                    //to update the table view once user inserts the data
+                    addProductsShowData();
+                    //clears textfield once user incerts
+                    addProductsClear();
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
+    public void addProductsAdd() {
+    String insertProduct = "INSERT INTO product (product_id, brand, product_name, status, price) VALUES (?, ?, ?, ?, ?)";
+    connect = database.connectDb();
+    
+    try {
+        Alert alert;
+        
+        // Validate fields
+        if (addProducts_productID.getText().isEmpty() || 
+            addProducts_brandName.getText().isEmpty() ||
+            addProducts_productName.getText().isEmpty() || 
+            addProducts_status.getSelectionModel().getSelectedItem() == null ||
+            addProducts_price.getText().isEmpty()) {
+            
+            alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Please fill all blank fields");
+            alert.showAndWait();
+            return;
+        }
+
+        // Check existing product 
+        String checkSql = "SELECT product_id FROM product WHERE product_id = ?";
+        try (PreparedStatement checkStmt = connect.prepareStatement(checkSql)) {
+            checkStmt.setString(1, addProducts_productID.getText());
+            ResultSet rs = checkStmt.executeQuery();
+            
+            if (rs.next()) {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Product ID already exists!");
+                alert.showAndWait();
+                return;
+            }
+        }
+
+        // Insert new product 
+        try (PreparedStatement insertStmt = connect.prepareStatement(insertProduct)) {
+            insertStmt.setString(1, addProducts_productID.getText());
+            insertStmt.setString(2, addProducts_brandName.getText());
+            insertStmt.setString(3, addProducts_productName.getText());
+            insertStmt.setString(4, (String) addProducts_status.getSelectionModel().getSelectedItem());
+            
+            // Handle numeric conversion
+            try {
+                double price = Double.parseDouble(addProducts_price.getText());
+                insertStmt.setDouble(5, price);
+            } catch (NumberFormatException e) {
+                alert = new Alert(AlertType.ERROR);
+                alert.setContentText("Invalid price format");
+                alert.showAndWait();
+                return;
+            }
+            
+            insertStmt.executeUpdate();  // CORRECT execute method
+            
+            alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Information Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Successfully Added!");
+            alert.showAndWait();
+            
+            addProductsShowData();
+            addProductsClear();
+        }
+        
+    } catch (SQLException e) {
+        e.printStackTrace();
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Database Error");
+        alert.setContentText("Error: " + e.getMessage());
+        alert.showAndWait();
+    }
+}
+
+    public void addProductsClear() {
+        addProducts_productID.setText("");
+        addProducts_brandName.setText("");
+        addProducts_productName.setText("");
+        addProducts_status.getSelectionModel().clearSelection();
+        addProducts_price.setText("");
+    }
+
+    private String[] statusList = {"Available", "Not Available"};
+
+    public void addProductsStatusList() {
+        List<String> listS = new ArrayList<>();
+        for (String data : statusList) {
+            listS.add(data);
+        }
+        ObservableList statusData = FXCollections.observableArrayList(listS);
+        addProducts_status.setItems(statusData);
+    }
+
+    public ObservableList<productData> addProductsListData() {
+        ObservableList<productData> prodList = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM product";
+        connect = database.connectDb();
+        try {
+            productData prod;
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+            while (result.next()) {
+                prod = new productData(result.getString("product_Id"),
+                        result.getString("brand"),
+                        result.getString("product_name"),
+                        result.getString("status"),
+                        result.getDouble("price"));
+                prodList.add(prod);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return prodList;
+    }
+
+    private ObservableList<productData> addProductsList;
+
+    public void addProductsShowData() { //to show the data on table view
+        addProductsList = addProductsListData();
+        addProducts_col_productID.setCellValueFactory(new PropertyValueFactory<>("productId"));
+        addProducts_col_brandName.setCellValueFactory(new PropertyValueFactory<>("brand"));
+        addProducts__col_productName.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        addProducts__col_status.setCellValueFactory(new PropertyValueFactory<>("status"));
+        addProducts_col_price.setCellValueFactory(new PropertyValueFactory<>("price"));
+        addProducts_tableView.setItems(addProductsList);
+    }
+
+    public void addProductsSelect() {
+        productData prod = addProducts_tableView.getSelectionModel().getSelectedItem();
+        int num = addProducts_tableView.getSelectionModel().getSelectedIndex();
+        if ((num - 1) < - 1) {
+            return;
+        }
+        addProducts_productID.setText(prod.getProductId());
+        addProducts_brandName.setText(prod.getBrand());
+        addProducts_productName.setText(prod.getProductName());
+        addProducts_price.setText(String.valueOf(prod.getPrice()));
+    }
+
     public void logout() {
         try {
             Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -260,7 +482,7 @@ public class adminDashboardController implements Initializable {
                 });
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
-                    stage.show();
+                stage.show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -282,6 +504,9 @@ public class adminDashboardController implements Initializable {
             addProducts_btn.setStyle("-fx-background-color:linear-gradient(to top right, #896b34, #b8a536);   ");
             dashboard_btn.setStyle("-fx-background-color:transparent");
             employees_btn.setStyle("-fx-background-color:transparent");
+
+            addProductsShowData();
+            addProductsStatusList();
         } else if (event.getSource() == employees_btn) {
             dashboard_form.setVisible(false);
             addProducts_form.setVisible(false);
@@ -303,7 +528,8 @@ public class adminDashboardController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        addProductsShowData();
+        addProductsStatusList();
     }
 
 }
