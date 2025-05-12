@@ -249,7 +249,7 @@ public class adminDashboardController implements Initializable {
     private ResultSet result;
 
     //table for products
-   /* public void addProductsAdd() {
+    /* public void addProductsAdd() {
         String insertProduct = "INSERT INTO product "
                 + " (product_id, brand, product_name, status, price) "
                 + "VALUES (?, ?, ?, ?, ?) ";
@@ -313,81 +313,135 @@ public class adminDashboardController implements Initializable {
         }
     }*/
     public void addProductsAdd() {
-    String insertProduct = "INSERT INTO product (product_id, brand, product_name, status, price) VALUES (?, ?, ?, ?, ?)";
-    connect = database.connectDb();
-    
-    try {
-        Alert alert;
-        
-        // Validate fields
-        if (addProducts_productID.getText().isEmpty() || 
-            addProducts_brandName.getText().isEmpty() ||
-            addProducts_productName.getText().isEmpty() || 
-            addProducts_status.getSelectionModel().getSelectedItem() == null ||
-            addProducts_price.getText().isEmpty()) {
-            
-            alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Please fill all blank fields");
-            alert.showAndWait();
-            return;
-        }
+        String insertProduct = "INSERT INTO product (product_id, brand, product_name, status, price) VALUES (?, ?, ?, ?, ?)";
+        connect = database.connectDb();
 
-        // Check existing product 
-        String checkSql = "SELECT product_id FROM product WHERE product_id = ?";
-        try (PreparedStatement checkStmt = connect.prepareStatement(checkSql)) {
-            checkStmt.setString(1, addProducts_productID.getText());
-            ResultSet rs = checkStmt.executeQuery();
-            
-            if (rs.next()) {
+        try {
+            Alert alert;
+
+            // Validate fields
+            if (addProducts_productID.getText().isEmpty()
+                    || addProducts_brandName.getText().isEmpty()
+                    || addProducts_productName.getText().isEmpty()
+                    || addProducts_status.getSelectionModel().getSelectedItem() == null
+                    || addProducts_price.getText().isEmpty()) {
+
                 alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error Message");
                 alert.setHeaderText(null);
-                alert.setContentText("Product ID already exists!");
+                alert.setContentText("Please fill all blank fields");
                 alert.showAndWait();
                 return;
             }
-        }
 
-        // Insert new product 
-        try (PreparedStatement insertStmt = connect.prepareStatement(insertProduct)) {
-            insertStmt.setString(1, addProducts_productID.getText());
-            insertStmt.setString(2, addProducts_brandName.getText());
-            insertStmt.setString(3, addProducts_productName.getText());
-            insertStmt.setString(4, (String) addProducts_status.getSelectionModel().getSelectedItem());
-            
-            // Handle numeric conversion
-            try {
-                double price = Double.parseDouble(addProducts_price.getText());
-                insertStmt.setDouble(5, price);
-            } catch (NumberFormatException e) {
-                alert = new Alert(AlertType.ERROR);
-                alert.setContentText("Invalid price format");
-                alert.showAndWait();
-                return;
+            // Check existing product 
+            String checkSql = "SELECT product_id FROM product WHERE product_id = ?";
+            try (PreparedStatement checkStmt = connect.prepareStatement(checkSql)) {
+                checkStmt.setString(1, addProducts_productID.getText());
+                ResultSet rs = checkStmt.executeQuery();
+
+                if (rs.next()) {
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Product ID already exists!");
+                    alert.showAndWait();
+                    return;
+                }
             }
-            
-            insertStmt.executeUpdate();  // CORRECT execute method
-            
-            alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Information Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Successfully Added!");
+
+            // Insert new product 
+            try (PreparedStatement insertStmt = connect.prepareStatement(insertProduct)) {
+                insertStmt.setString(1, addProducts_productID.getText());
+                insertStmt.setString(2, addProducts_brandName.getText());
+                insertStmt.setString(3, addProducts_productName.getText());
+                insertStmt.setString(4, (String) addProducts_status.getSelectionModel().getSelectedItem());
+
+                // Handle numeric conversion
+                try {
+                    double price = Double.parseDouble(addProducts_price.getText());
+                    insertStmt.setDouble(5, price);
+                } catch (NumberFormatException e) {
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setContentText("Invalid price format");
+                    alert.showAndWait();
+                    return;
+                }
+
+                insertStmt.executeUpdate();  // CORRECT execute method
+
+                alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Information Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Successfully Added!");
+                alert.showAndWait();
+
+                addProductsShowData();
+                addProductsClear();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Database Error");
+            alert.setContentText("Error: " + e.getMessage());
             alert.showAndWait();
-            
-            addProductsShowData();
-            addProductsClear();
         }
-        
-    } catch (SQLException e) {
-        e.printStackTrace();
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Database Error");
-        alert.setContentText("Error: " + e.getMessage());
-        alert.showAndWait();
     }
-}
+
+    public void addProductsUpdate() {
+        String updateProduct = "UPDATE product SET brand = '"
+                + addProducts_brandName.getText() + "', product_name = '"
+                + addProducts_productName.getText() + "', status = '"
+                + addProducts_status.getSelectionModel().getSelectedItem() + "', price = '"
+                + addProducts_price.getText() + "' WHERE product_id = '"
+                + addProducts_productID.getText() + "'";
+        connect = database.connectDb();
+        try {
+            Alert alert;
+            //checks if the fields are empty
+            if (addProducts_productID.getText().isEmpty()
+                    || addProducts_brandName.getText().isEmpty()
+                    || addProducts_productName.getText().isEmpty()
+                    || addProducts_status.getSelectionModel().getSelectedItem() == null
+                    || addProducts_price.getText().isEmpty()) {
+
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all blank fields");
+                alert.showAndWait();
+
+            } else {
+                statement = connect.createStatement();
+                statement.executeUpdate(updateProduct);
+
+                alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure you want to UPDATE Product" + addProducts_productID.getText() + "?");
+                Optional<ButtonType> option = alert.showAndWait();
+                //if user clicks ok
+
+                if (option.get().equals(ButtonType.OK)) {
+                    statement = connect.createStatement();
+                    statement.executeUpdate(updateProduct);
+                    alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Succesfully Updated");
+                    alert.showAndWait();
+                    addProductsShowData();
+                    addProductsClear();
+                } else {
+                    return;
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void addProductsClear() {
         addProducts_productID.setText("");
@@ -397,11 +451,60 @@ public class adminDashboardController implements Initializable {
         addProducts_price.setText("");
     }
 
+     /*public void addProductsDelete() {
+        String deleteProduct = "DELETE FROM product WHERE product_id = '"
+                 + addProducts_productID.getText() + "'";
+        connect = database.connectDb();
+        try {
+            Alert alert;
+            //checks if the fields are empty
+            if (addProducts_productID.getText().isEmpty()
+                    || addProducts_brandName.getText().isEmpty()
+                    || addProducts_productName.getText().isEmpty()
+                    || addProducts_status.getSelectionModel().getSelectedItem() == null
+                    || addProducts_price.getText().isEmpty()) {
+
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all blank fields");
+                alert.showAndWait();
+
+            } else {
+                statement = connect.createStatement();
+                statement.executeUpdate(updateProduct);
+
+                alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure you want to UPDATE Product" + addProducts_productID.getText() + "?");
+                Optional<ButtonType> option = alert.showAndWait();
+                //if user clicks ok
+
+                if (option.get().equals(ButtonType.OK)) {
+                    statement = connect.createStatement();
+                    statement.executeUpdate(updateProduct);
+                    alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Succesfully Updated");
+                    alert.showAndWait();
+                    addProductsShowData();
+                    addProductsClear();
+                } else {
+                    return;
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
     private String[] statusList = {"Available", "Not Available"};
 
     public void addProductsStatusList() {
         List<String> listS = new ArrayList<>();
-        for (String data : statusList) {
+        for(String data : statusList) {
             listS.add(data);
         }
         ObservableList statusData = FXCollections.observableArrayList(listS);
@@ -489,6 +592,10 @@ public class adminDashboardController implements Initializable {
         }
     }
 
+    public void displayUsername() {
+        username.setText(getData.username);
+    }
+
     public void switchForm(ActionEvent event) {
         if (event.getSource() == dashboard_btn) {
             dashboard_form.setVisible(true);
@@ -528,6 +635,8 @@ public class adminDashboardController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        displayUsername();
         addProductsShowData();
         addProductsStatusList();
     }

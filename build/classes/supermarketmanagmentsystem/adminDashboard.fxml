@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
@@ -47,10 +48,13 @@
                               <Font name="Tahoma" size="20.0" />
                            </font>
                         </Label>
-                        <Label fx:id="username" layoutX="16.0" layoutY="159.0" styleClass="shadow" stylesheets="@dashboardDesiagn.css" text="ADMINSTRATOR" textFill="#f2efef">
+                        <Label fx:id="username" alignment="CENTER" contentDisplay="CENTER" layoutX="16.0" layoutY="159.0" styleClass="shadow" stylesheets="@dashboardDesiagn.css" text="ADMINSTRATOR" textAlignment="JUSTIFY" textFill="#f2efef">
                            <font>
                               <Font name="Tahoma Bold" size="20.0" />
                            </font>
+                           <effect>
+                              <Reflection />
+                           </effect>
                         </Label>
                         <Line endX="100.0" layoutX="100.0" layoutY="208.0" scaleX="0.8" startX="-100.0" stroke="#fcf9f9" />
                         <Button fx:id="dashboard_btn" layoutX="3.0" layoutY="257.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="28.0" prefWidth="196.0" stylesheets="@dashboardDesiagn.css" text="Dashboard">
@@ -233,7 +237,7 @@
                                        </font>
                                     </Label>
                                     <Button fx:id="addProducts_addBtn" layoutX="18.0" layoutY="310.0" mnemonicParsing="false" onAction="#addProductsAdd" prefHeight="46.0" prefWidth="89.0" styleClass="add-btn" stylesheets="@dashboardDesiagn.css" text="Add" />
-                                    <Button fx:id="addProducts_UpdateBtn" layoutX="135.0" layoutY="310.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="89.0" styleClass="Update-btn" stylesheets="@dashboardDesiagn.css" text="Update" />
+                                    <Button fx:id="addProducts_UpdateBtn" layoutX="135.0" layoutY="310.0" mnemonicParsing="false" onAction="#addProductsUpdate" prefHeight="46.0" prefWidth="89.0" styleClass="Update-btn" stylesheets="@dashboardDesiagn.css" text="Update" />
                                     <Button fx:id="addProducts_clearBtn" layoutX="15.0" layoutY="401.0" mnemonicParsing="false" onAction="#addProductsClear" prefHeight="46.0" prefWidth="89.0" styleClass="clear-btn" stylesheets="@dashboardDesiagn.css" text="Clear" />
                                     <Button fx:id="addProducts_deleteBtn" layoutX="135.0" layoutY="401.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="89.0" styleClass="delete-btn" stylesheets="@dashboardDesiagn.css" text="Delete" />
                                     <TextField fx:id="addProducts_price" layoutX="98.0" layoutY="229.0" prefHeight="30.0" prefWidth="142.0" styleClass="textfield" stylesheets="@dashboardDesiagn.css" />
