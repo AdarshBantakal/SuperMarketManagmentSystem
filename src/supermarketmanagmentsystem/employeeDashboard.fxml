@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.shape.*?>
-<?import de.jensd.fx.glyphs.fontawesome.*?>
 <?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
@@ -9,110 +7,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+
 <StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-    <children>
-        <AnchorPane fx:id="main_form" prefHeight="200.0" prefWidth="200.0" stylesheets="@dashboardDesiagn.css">
-            <children>
-                <BorderPane layoutX="56.0" layoutY="69.0" prefHeight="600.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <top>
-                        <AnchorPane prefHeight="43.0" prefWidth="1100.0" styleClass="top-form" stylesheets="@dashboardDesiagn.css" BorderPane.alignment="CENTER">
-                            <children>
-                                <AnchorPane layoutX="332.0" layoutY="-86.0" prefHeight="35.0" prefWidth="1100.0" styleClass="semi-top-form" stylesheets="@dashboardDesiagn.css" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                    <children>
-                                        <!-- Close button with action handler -->
-                                        <Button fx:id="close" layoutX="1021.0" layoutY="2.0" mnemonicParsing="false" onAction="#close" prefHeight="30.0" prefWidth="54.0" styleClass="close" stylesheets="@dashboardDesiagn.css" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="2.0">
-                                 <graphic>
-                                    <FontAwesomeIcon glyphName="CLOSE" size="1.2em" />
-                                 </graphic>
-                                        </Button>
-                                        
-                                        <!-- Minimize button with action handler -->
-                                        <Button fx:id="minimize" layoutX="1003.0" layoutY="2.0" mnemonicParsing="false" onAction="#minimize" prefHeight="30.0" prefWidth="41.0" styleClass="minimize" stylesheets="@dashboardDesiagn.css">
-                                            <graphic>
-                                                <FontAwesomeIcon glyphName="MINUS" size="1.2em" />
-                                            </graphic>
-                                        </Button>
-                                        
-                                        <FontAwesomeIcon fill="#a8962b" glyphName="SHOPPING_CART" layoutX="14.0" layoutY="22.0" size="1.6em" />
-                                        <Label layoutX="57.0" layoutY="7.0" text="Supermarket Management  |  Employee Portal" />
-                                    </children>
-                                </AnchorPane>
-                            </children>
-                        </AnchorPane>
-                    </top>
-                    <left>
-                        <AnchorPane prefHeight="200.0" prefWidth="200.0" stylesheets="@dashboardDesiagn.css" BorderPane.alignment="CENTER">
-                            <children>
-                                <FontAwesomeIcon fill="#f5f4f4" glyphName="USER" layoutX="53.0" layoutY="117.0" size="8em" />
-                        <Line endX="100.0" scaleX="0.5" startX="-100.0" AnchorPane.bottomAnchor="300.0" />
-                        <Label layoutX="74.0" layoutY="159.0" text="Employee" textFill="#f5f5f5">
-                           <font>
-                              <Font name="System Bold" size="20.0" />
-                           </font>
-                        </Label>
-                                <Label layoutX="57.0" layoutY="134.0" text="Welcome " textFill="#f8f4f4">
-                                    <font>
-                                        <Font name="Tahoma" size="20.0" />
-                                    </font>
-                                </Label>
-                                
-                                <!-- Dashboard button with action handler -->
-                                <Button fx:id="dashboard_btn" layoutX="3.0" layoutY="257.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="28.0" prefWidth="196.0" stylesheets="@dashboardDesiagn.css" text="Dashboard">
-                                    <graphic>
-                                        <FontAwesomeIcon fill="#ebe9e9" glyphName="DASHBOARD" size="1.2em" />
-                                    </graphic>
-                                    <styleClass>
-                                        <String fx:value="nav-btn" />
-                                        <String fx:value="shadow" />
-                                    </styleClass>
-                                </Button>
-                                
-                                <Button fx:id="addProducts_btn" layoutX="2.0" layoutY="292.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="28.0" prefWidth="196.0" stylesheets="@dashboardDesiagn.css" text=" Add Product">
-                                    <graphic>
-                                        <FontAwesomeIcon fill="#ebe9e9" glyphName="PLUS_CIRCLE" size="1.2em" />
-                                    </graphic>
-                                    <styleClass>
-                                        <String fx:value="nav-btn" />
-                                        <String fx:value="shadow" />
-                                    </styleClass>
-                                </Button>
-                                
-                                <!-- Employees button with action handler -->
-                                <Button fx:id="employees_btn" layoutX="1.0" layoutY="327.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="28.0" prefWidth="199.0" stylesheets="@dashboardDesiagn.css" text="Employees">
-                                    <graphic>
-                                        <FontAwesomeIcon fill="#ebe9e9" glyphName="USERS" size="1.2em" />
-                                    </graphic>
-                                    <styleClass>
-                                        <String fx:value="nav-btn" />
-                                        <String fx:value="shadow" />
-                                    </styleClass>
-                                </Button>
-                                
-                                <!-- Logout button with action handler -->
-                                <Button fx:id="logout" layoutX="14.0" layoutY="512.0" mnemonicParsing="false" onAction="#logout" stylesheets="@dashboardDesiagn.css">
-                                    <graphic>
-                                        <FontAwesomeIcon fill="#fcf9f9" glyphName="SIGN_OUT" size="1.2em" />
-                                    </graphic>
-                                    <styleClass>
-                                        <String fx:value="logout-btn" />
-                                        <String fx:value="shadow" />
-                                    </styleClass>
-                                </Button>
-                                
-                                <Label layoutX="53.0" layoutY="517.0" text="SIGN OUT" textFill="#f8f8f8">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                </Label>
-                            </children>
-                            <styleClass>
-                                <String fx:value="nav-form" />
-                                <String fx:value="shadow" />
-                            </styleClass>
-                        </AnchorPane>
-                    </left>
-                </BorderPane>
-            </children>
-        </AnchorPane>
-    </children>
+   <children>
+      <Label text="Welcome Employee !">
+         <font>
+            <Font size="50.0" />
+         </font>
+      </Label>
+   </children>
 </StackPane>

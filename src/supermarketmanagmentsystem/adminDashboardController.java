@@ -375,8 +375,9 @@ public class adminDashboardController implements Initializable {
                 alert.setHeaderText(null);
                 alert.setContentText("Successfully Added!");
                 alert.showAndWait();
-
+                 //to add the data on table view
                 addProductsShowData();
+                // //to clear the view once added the data
                 addProductsClear();
             }
 
@@ -431,7 +432,9 @@ public class adminDashboardController implements Initializable {
                     alert.setHeaderText(null);
                     alert.setContentText("Succesfully Updated");
                     alert.showAndWait();
+                     //to update the data on table view
                     addProductsShowData();
+                    //clear the fields once you update the data
                     addProductsClear();
                 } else {
                     return;
@@ -452,7 +455,7 @@ public class adminDashboardController implements Initializable {
     }
 
      /*public void addProductsDelete() {
-        String deleteProduct = "DELETE FROM product WHERE product_id = '"
+        String deleteProduct = "DELETE FROM product WHERE product_id = '" 
                  + addProducts_productID.getText() + "'";
         connect = database.connectDb();
         try {
@@ -472,24 +475,26 @@ public class adminDashboardController implements Initializable {
 
             } else {
                 statement = connect.createStatement();
-                statement.executeUpdate(updateProduct);
+                statement.executeUpdate(deleteProduct);
 
                 alert = new Alert(AlertType.CONFIRMATION);
                 alert.setTitle("Confirmation Message");
                 alert.setHeaderText(null);
-                alert.setContentText("Are you sure you want to UPDATE Product" + addProducts_productID.getText() + "?");
+                alert.setContentText("Are you sure you want to DELETE Product" + addProducts_productID.getText() + "?");
                 Optional<ButtonType> option = alert.showAndWait();
                 //if user clicks ok
 
                 if (option.get().equals(ButtonType.OK)) {
                     statement = connect.createStatement();
-                    statement.executeUpdate(updateProduct);
+                    statement.executeUpdate(deleteProduct);
                     alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Information Message");
                     alert.setHeaderText(null);
-                    alert.setContentText("Succesfully Updated");
+                    alert.setContentText("Succesfully Deleted ! ");
                     alert.showAndWait();
+                     //to delete the data on table view
                     addProductsShowData();
+                     //to clear the fields once you delelte the data
                     addProductsClear();
                 } else {
                     return;
@@ -500,6 +505,72 @@ public class adminDashboardController implements Initializable {
             e.printStackTrace();
         }
     }*/
+  
+    public void addProductsDelete() {
+    // Always use PreparedStatement to prevent SQL injection
+    String deleteProduct = "DELETE FROM product WHERE product_id = ?";
+    connect = database.connectDb();
+    
+    try {
+        Alert alert;
+        
+        // Check if product ID is empty (only mandatory field for deletion)
+        if (addProducts_productID.getText().isEmpty()) {
+            alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please select a product to delete");
+                alert.showAndWait();
+            return;
+        }
+
+        // Confirmation dialog FIRST
+        alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to DELETE Product " + 
+                           addProducts_productID.getText() + "?");
+        
+        Optional<ButtonType> option = alert.showAndWait();
+        if (!option.isPresent() || option.get() != ButtonType.OK) {
+            return;
+        }
+
+        // Execute deletion
+        try (PreparedStatement pstmt = connect.prepareStatement(deleteProduct)) {
+            pstmt.setString(1, addProducts_productID.getText());
+            int affectedRows = pstmt.executeUpdate();
+            
+            if (affectedRows > 0) {
+                alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Succesfully Deleted ! ");
+                    alert.showAndWait();
+                addProductsShowData();
+                addProductsClear();
+            } else {alert = new Alert(AlertType.WARNING);
+                    alert.setTitle("Warning Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("No product was deleted ! ");
+                    alert.showAndWait();
+                
+            }
+        }
+    } catch (SQLException e) {
+                      Alert alert;
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Database Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Delete failed: ! "+ e.getMessage());
+                    alert.showAndWait();
+        
+        e.printStackTrace();
+    }
+}
+
+// Helper method for alerts
+
     private String[] statusList = {"Available", "Not Available"};
 
     public void addProductsStatusList() {

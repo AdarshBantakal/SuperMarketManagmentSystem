@@ -239,7 +239,7 @@
                                     <Button fx:id="addProducts_addBtn" layoutX="18.0" layoutY="310.0" mnemonicParsing="false" onAction="#addProductsAdd" prefHeight="46.0" prefWidth="89.0" styleClass="add-btn" stylesheets="@dashboardDesiagn.css" text="Add" />
                                     <Button fx:id="addProducts_UpdateBtn" layoutX="135.0" layoutY="310.0" mnemonicParsing="false" onAction="#addProductsUpdate" prefHeight="46.0" prefWidth="89.0" styleClass="Update-btn" stylesheets="@dashboardDesiagn.css" text="Update" />
                                     <Button fx:id="addProducts_clearBtn" layoutX="15.0" layoutY="401.0" mnemonicParsing="false" onAction="#addProductsClear" prefHeight="46.0" prefWidth="89.0" styleClass="clear-btn" stylesheets="@dashboardDesiagn.css" text="Clear" />
-                                    <Button fx:id="addProducts_deleteBtn" layoutX="135.0" layoutY="401.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="89.0" styleClass="delete-btn" stylesheets="@dashboardDesiagn.css" text="Delete" />
+                                    <Button fx:id="addProducts_deleteBtn" layoutX="135.0" layoutY="401.0" mnemonicParsing="false" onAction="#addProductsDelete" prefHeight="46.0" prefWidth="89.0" styleClass="delete-btn" stylesheets="@dashboardDesiagn.css" text="Delete" />
                                     <TextField fx:id="addProducts_price" layoutX="98.0" layoutY="229.0" prefHeight="30.0" prefWidth="142.0" styleClass="textfield" stylesheets="@dashboardDesiagn.css" />
                                  </children>
                               </AnchorPane>
