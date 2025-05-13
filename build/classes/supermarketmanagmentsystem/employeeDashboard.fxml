@@ -1,19 +1,211 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
+
+<?import javafx.scene.effect.*?>
+
+<?import javafx.geometry.*?>
+
+<?import javafx.scene.shape.*?>
+
 <?import javafx.scene.text.*?>
+
+<?import de.jensd.fx.glyphs.fontawesome.*?>
+
+<?import javafx.scene.chart.*?>
+
 <?import java.lang.*?>
+
 <?import java.util.*?>
+
 <?import javafx.scene.*?>
+
 <?import javafx.scene.control.*?>
+
 <?import javafx.scene.layout.*?>
 
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" >
+
    <children>
-      <Label text="Welcome Employee !">
-         <font>
-            <Font size="50.0" />
-         </font>
-      </Label>
+
+      <AnchorPane fx:id="main_form" prefHeight="600.0" prefWidth="1100.0" stylesheets="@dashboardDesiagn.css">
+
+         <children>
+
+            <BorderPane prefHeight="600.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+               <top>
+
+                  <AnchorPane prefHeight="43.0" styleClass="top-form" stylesheets="@dashboardDesiagn.css" BorderPane.alignment="CENTER">
+
+                     <children>
+
+                        <Label layoutX="20.0" layoutY="7.0" styleClass="header-label" text="Employee Dashboard | Supermarket Management System" />
+
+                        <Button fx:id="logout" layoutX="1054.0" layoutY="7.0" mnemonicParsing="false">
+
+                           <graphic>
+
+                              <FontAwesomeIcon glyphName="CLOSE" />
+
+                           </graphic></Button>
+
+                     </children>
+
+                  </AnchorPane>
+
+               </top>
+
+               
+
+               <left>
+
+                  <VBox alignment="TOP_CENTER" prefWidth="200.0" spacing="10" styleClass="nav-form" stylesheets="@dashboardDesiagn.css">
+
+                     <children>
+
+                        <FontAwesomeIcon glyphName="USER" size="6em" text="" />
+
+                        <Label fx:id="username" styleClass="nav-label" text="EMPLOYEE" />
+
+                        <Button fx:id="billing_btn" styleClass="nav-btn" text="Billing" />
+
+                        <Button fx:id="availability_btn" styleClass="nav-btn" text="Product Availability" />
+
+                        <Button fx:id="profile_btn" styleClass="nav-btn" text="My Profile" />
+
+                        <Button fx:id="logout1" mnemonicParsing="false" text="Logout" />
+
+                     </children>
+
+                  </VBox>
+
+               </left>
+
+               
+
+               <center>
+
+                  <StackPane fx:id="content_area">
+
+                     <children>
+
+                        <!-- Billing Form -->
+
+                        <AnchorPane fx:id="billing_form">
+
+                           <children>
+
+                              <Label layoutX="20.0" layoutY="20.0" styleClass="section-title" text="Billing Section" />
+
+                              <TextField fx:id="billing_productID" layoutX="20.0" layoutY="60.0" promptText="Enter Product ID" />
+
+                              <Button fx:id="billing_add_btn" layoutX="200.0" layoutY="60.0" text="Add to Bill" />
+
+                              <TableView fx:id="billing_table" layoutX="20.0" layoutY="100.0" prefHeight="400.0" prefWidth="700.0">
+
+                                 <columns>
+
+                                    <TableColumn prefWidth="123.0" text="Product ID" />
+
+                                    <TableColumn editable="false" prefWidth="213.0" text="Product Name" />
+
+                                    <TableColumn prefWidth="130.0" text="Price" />
+
+                                    <TableColumn prefWidth="91.0" text="Quantity" />
+
+                                    <TableColumn prefWidth="142.0" text="Total" />
+
+                                 </columns>
+
+                              </TableView>
+
+                              <Label layoutX="750.0" layoutY="100.0" text="Total Amount: " />
+
+                              <Label fx:id="billing_total" layoutX="850.0" layoutY="100.0" text="0.00" />
+
+                              <Button fx:id="billing_checkout_btn" layoutX="750.0" layoutY="150.0" text="Checkout" />
+
+                           </children>
+
+                        </AnchorPane>
+
+                        
+
+                        <!-- Product Availability Form -->
+
+                        <AnchorPane fx:id="availability_form" visible="false">
+
+                           <children>
+
+                              <Label layoutX="20.0" layoutY="20.0" styleClass="section-title" text="Product Availability" />
+
+                              <TextField fx:id="availability_search" layoutX="20.0" layoutY="60.0" promptText="Search Product" />
+
+                              <Button fx:id="availability_search_btn" layoutX="250.0" layoutY="60.0" text="Search" />
+
+                              <TableView fx:id="availability_table" layoutX="20.0" layoutY="100.0" prefHeight="400.0" prefWidth="700.0">
+
+                                 <columns>
+
+                                    <TableColumn prefWidth="142.0" text="Product ID" />
+
+                                    <TableColumn prefWidth="261.0" text="Product Name" />
+
+                                    <TableColumn prefWidth="143.0" text="Stock" />
+
+                                    <TableColumn prefWidth="153.0" text="Price" />
+
+                                 </columns>
+
+                              </TableView>
+
+                           </children>
+
+                        </AnchorPane>
+
+   
+
+                        <!-- Profile Form -->
+
+                        <AnchorPane fx:id="profile_form" visible="false">
+
+      <children>
+
+                              <Label layoutX="20.0" layoutY="20.0" styleClass="section-title" text="My Profile" />
+
+                              <Label layoutX="20.0" layoutY="60.0" text="Employee ID:" />
+
+                              <Label fx:id="profile_employeeID" layoutX="120.0" layoutY="60.0" text="12345" />
+
+                              <Label layoutX="20.0" layoutY="100.0" text="Name:" />
+
+                              <Label fx:id="profile_name" layoutX="120.0" layoutY="100.0" text="John Doe" />
+
+                              <Label layoutX="20.0" layoutY="140.0" text="Position:" />
+
+                              <Label fx:id="profile_position" layoutX="120.0" layoutY="140.0" text="Cashier" />
+
+                              <Button fx:id="profile_edit_btn" layoutX="20.0" layoutY="200.0" text="Edit Profile" />
+
+      </children>
+
+                        </AnchorPane>
+
+                     </children>
+
+                  </StackPane>
+
+               </center>
+
+            </BorderPane>
+
+         </children>
+
+      </AnchorPane>
+
    </children>
+
 </StackPane>

@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="SuperMarketManagmentSystemdb.jar" size="28398" download="eager" />
+    <jar href="SuperMarketManagmentSystemdb.jar" size="28355" download="eager" />
     <jar href="lib\fontawesomefx-8.2.jar" size="180341" download="eager" />
     <jar href="lib\mysql-connector-j-9.3.0.jar" size="2593726" download="eager" />
   </resources>

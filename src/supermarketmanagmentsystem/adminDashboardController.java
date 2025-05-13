@@ -6,16 +6,20 @@ package supermarketmanagmentsystem;
 
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -110,7 +114,7 @@ public class adminDashboardController implements Initializable {
     private AnchorPane addProducts_form;
 
     @FXML
-    private TableColumn<?, ?> employees_col_employeeID;
+    private TableColumn<employeeData, String> employees_col_employeeID;
 
     @FXML
     private Label dashboard_totalIncome;
@@ -170,10 +174,10 @@ public class adminDashboardController implements Initializable {
     private Button minimize;
 
     @FXML
-    private TableColumn<?, ?> employees_col_gender;
+    private TableColumn<employeeData, String> employees_col_gender;
 
     @FXML
-    private TableColumn<?, ?> employees_col_lastName;
+    private TableColumn<employeeData, String> employees_col_lastName;
 
     @FXML
     private TableColumn<productData, String> addProducts_col_brandName;
@@ -197,10 +201,10 @@ public class adminDashboardController implements Initializable {
     private TextField employees_lastName;
 
     @FXML
-    private TableColumn<?, ?> employees_col_date;
+    private TableColumn<employeeData, Date> employees_col_date;
 
     @FXML
-    private TableColumn<?, ?> employees_col_firstName;
+    private TableColumn<employeeData, String> employees_col_firstName;
 
     @FXML
     private Label dashboard_activeEmployees;
@@ -224,7 +228,7 @@ public class adminDashboardController implements Initializable {
     private TextField employees_firstName;
 
     @FXML
-    private TableColumn<?, ?> employees_col_password;
+    private TableColumn<employeeData, String> employees_col_password;
 
     @FXML
     private AnchorPane employees_form;
@@ -236,7 +240,7 @@ public class adminDashboardController implements Initializable {
     private AreaChart<?, ?> dashboard_chart;
 
     @FXML
-    private TableView<?> employees_tableView;
+    private TableView<employeeData> employees_tableView;
 
     @FXML
     private Label username;
@@ -375,7 +379,7 @@ public class adminDashboardController implements Initializable {
                 alert.setHeaderText(null);
                 alert.setContentText("Successfully Added!");
                 alert.showAndWait();
-                 //to add the data on table view
+                //to add the data on table view
                 addProductsShowData();
                 // //to clear the view once added the data
                 addProductsClear();
@@ -390,7 +394,7 @@ public class adminDashboardController implements Initializable {
         }
     }
 
-    public void addProductsUpdate() {
+    /* public void addProductsUpdate() {
         String updateProduct = "UPDATE product SET brand = '"
                 + addProducts_brandName.getText() + "', product_name = '"
                 + addProducts_productName.getText() + "', status = '"
@@ -444,6 +448,88 @@ public class adminDashboardController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }*/
+    public void addProductsUpdate() {
+        // Get values from fields
+        String productID = addProducts_productID.getText();
+        String brandName = addProducts_brandName.getText();
+        String productName = addProducts_productName.getText();
+        String status = (String) addProducts_status.getSelectionModel().getSelectedItem();
+        String price = addProducts_price.getText();
+
+        connect = database.connectDb();
+
+        try {
+            Alert alert;
+            // Check if the product ID is empty
+            if (productID.isEmpty()) {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Product ID cannot be empty");
+                alert.showAndWait();
+                return;
+            }
+
+            // Start building the update query dynamically
+            StringBuilder updateQuery = new StringBuilder("UPDATE product SET ");
+            boolean isFirstField = true;
+
+            // Append each field to the query only if it is not empty
+            if (!brandName.isEmpty()) {
+                appendField(updateQuery, isFirstField, "brand", brandName);
+                isFirstField = false;
+            }
+            if (!productName.isEmpty()) {
+                appendField(updateQuery, isFirstField, "product_name", productName);
+                isFirstField = false;
+            }
+            if (status != null && !status.isEmpty()) {
+                appendField(updateQuery, isFirstField, "status", status);
+                isFirstField = false;
+            }
+            if (!price.isEmpty()) {
+                appendField(updateQuery, isFirstField, "price", price);
+            }
+            // Add the WHERE clause to update the correct product by ID
+            updateQuery.append(" WHERE product_id = '").append(productID).append("'");
+
+            // Execute the update query
+            statement = connect.createStatement();
+            statement.executeUpdate(updateQuery.toString());
+
+            // Ask for user confirmation before executing the update
+            alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to UPDATE Product " + productID + "?");
+            Optional<ButtonType> option = alert.showAndWait();
+
+            // If the user confirms, show an information alert and update the table view
+            if (option.get().equals(ButtonType.OK)) {
+                alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Information Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Successfully Updated");
+                alert.showAndWait();
+
+                // Update the table view
+                addProductsShowData();
+                // Clear the input fields after the update
+                addProductsClear();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+// Helper method to append fields to the SQL query
+    private void appendField(StringBuilder query, boolean isFirstField, String column, String value) {
+        if (!isFirstField) {
+            query.append(", ");
+        }
+        query.append(column).append(" = '").append(value).append("'");
     }
 
     public void addProductsClear() {
@@ -454,7 +540,7 @@ public class adminDashboardController implements Initializable {
         addProducts_price.setText("");
     }
 
-     /*public void addProductsDelete() {
+    /*public void addProductsDelete() {
         String deleteProduct = "DELETE FROM product WHERE product_id = '" 
                  + addProducts_productID.getText() + "'";
         connect = database.connectDb();
@@ -505,81 +591,123 @@ public class adminDashboardController implements Initializable {
             e.printStackTrace();
         }
     }*/
-  
     public void addProductsDelete() {
-    // Always use PreparedStatement to prevent SQL injection
-    String deleteProduct = "DELETE FROM product WHERE product_id = ?";
-    connect = database.connectDb();
-    
-    try {
-        Alert alert;
-        
-        // Check if product ID is empty (only mandatory field for deletion)
-        if (addProducts_productID.getText().isEmpty()) {
-            alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error Message");
+        // Always use PreparedStatement to prevent SQL injection
+        String deleteProduct = "DELETE FROM product WHERE product_id = ?";
+        connect = database.connectDb();
+
+        try {
+            Alert alert;
+
+            // Check if product ID is empty (only mandatory field for deletion)
+            if (addProducts_productID.getText().isEmpty()) {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
                 alert.setHeaderText(null);
                 alert.setContentText("Please select a product to delete");
                 alert.showAndWait();
-            return;
-        }
+                return;
+            }
 
-        // Confirmation dialog FIRST
-        alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation");
-        alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to DELETE Product " + 
-                           addProducts_productID.getText() + "?");
-        
-        Optional<ButtonType> option = alert.showAndWait();
-        if (!option.isPresent() || option.get() != ButtonType.OK) {
-            return;
-        }
+            // Confirmation dialog FIRST
+            alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to DELETE Product "
+                    + addProducts_productID.getText() + "?");
 
-        // Execute deletion
-        try (PreparedStatement pstmt = connect.prepareStatement(deleteProduct)) {
-            pstmt.setString(1, addProducts_productID.getText());
-            int affectedRows = pstmt.executeUpdate();
-            
-            if (affectedRows > 0) {
-                alert = new Alert(AlertType.INFORMATION);
+            Optional<ButtonType> option = alert.showAndWait();
+            if (!option.isPresent() || option.get() != ButtonType.OK) {
+                return;
+            }
+
+            // Execute deletion
+            try (PreparedStatement pstmt = connect.prepareStatement(deleteProduct)) {
+                pstmt.setString(1, addProducts_productID.getText());
+                int affectedRows = pstmt.executeUpdate();
+
+                if (affectedRows > 0) {
+                    alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Information Message");
                     alert.setHeaderText(null);
                     alert.setContentText("Succesfully Deleted ! ");
                     alert.showAndWait();
-                addProductsShowData();
-                addProductsClear();
-            } else {alert = new Alert(AlertType.WARNING);
+                    addProductsShowData();
+                    addProductsClear();
+                } else {
+                    alert = new Alert(AlertType.WARNING);
                     alert.setTitle("Warning Message");
                     alert.setHeaderText(null);
                     alert.setContentText("No product was deleted ! ");
                     alert.showAndWait();
-                
+
+                }
             }
+        } catch (SQLException e) {
+            Alert alert;
+            alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Database Error Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Delete failed: ! " + e.getMessage());
+            alert.showAndWait();
+
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-                      Alert alert;
-                    alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Database Error Message");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Delete failed: ! "+ e.getMessage());
-                    alert.showAndWait();
-        
-        e.printStackTrace();
     }
-}
 
 // Helper method for alerts
-
     private String[] statusList = {"Available", "Not Available"};
 
     public void addProductsStatusList() {
         List<String> listS = new ArrayList<>();
-        for(String data : statusList) {
+        for (String data : statusList) {
             listS.add(data);
         }
         ObservableList statusData = FXCollections.observableArrayList(listS);
         addProducts_status.setItems(statusData);
+    }
+
+    public void addProductsSearch() {
+        // Wrap the ObservableList in a FilteredList (initially display all data)
+        FilteredList<productData> filteredData = new FilteredList<>(addProductsList, p -> true);
+
+        // Add a listener to the search field to dynamically filter the data
+        addProducts_search.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(product -> {
+                // If the search field is empty, display all products
+                if (newValue == null || newValue.trim().isEmpty()) {
+                    return true;
+                }
+
+                // Convert the search text to lowercase for case-insensitive comparison
+                String lowerCaseFilter = newValue.toLowerCase();
+
+                // Check if any product attribute contains the search text
+                if (product.getProductId().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (product.getBrand().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (product.getProductName().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (product.getStatus().toLowerCase().contains(lowerCaseFilter)) {
+                    return true;
+                } else if (String.valueOf(product.getPrice()).contains(lowerCaseFilter)) {
+                    return true;
+                }
+
+                // No match found
+                return false;
+            });
+        });
+
+        // Wrap the FilteredList in a SortedList
+        SortedList<productData> sortedData = new SortedList<>(filteredData);
+
+        // Bind the SortedList comparator to the TableView comparator
+        sortedData.comparatorProperty().bind(addProducts_tableView.comparatorProperty());
+
+        // Set the sorted and filtered data to the TableView
+        addProducts_tableView.setItems(sortedData);
     }
 
     public ObservableList<productData> addProductsListData() {
@@ -628,6 +756,334 @@ public class adminDashboardController implements Initializable {
         addProducts_price.setText(String.valueOf(prod.getPrice()));
     }
 
+    /*public void employeesSave() {
+        Date date = new Date();
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+        String insertEmployee = "INSERT INTO employee "
+                + " (employee_id, password, firstName, lastName, gender, date) "
+                + "VALUES (?, ?, ?, ?, ?, ?) ";
+        connect = database.connectDb();
+        try {
+            Alert alert;
+            if (employees_employeeID.getText().isEmpty()
+                    || employees_password.getText().isEmpty()
+                    || employees_firstName.getText().isEmpty()
+                    || employees_lastName.getText().isEmpty()
+                    || employees_gender.getSelectionModel().getSelectedItem()
+                    == null) {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all blank fields");
+                alert.showAndWait();
+            } else {
+                String checkExist = "SELECT employee_id FROM employee WHERE employee_id
+                +employees_employeeID.getText() +
+                """;
+                statement = connect.createStatement();
+                result = statement.executeQuery(checkExist);
+                //IF THE EMPLOYEE IS ALREADY working
+                if (result.next()) {
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Employee ID" + employees_employeeID.getText() + "was already eists!");
+                    alert.showAndWait();
+                }else{
+                    prepare = connect.prepareStatement(insertEmployee);
+                    prepare.setString(1, employees_employeeID.getText());
+                    prepare.setString(2, employees_password.getText());
+                    prepare.setString(3, employees_firstName.getText());
+                    prepare.setString(4, employees_lastName.getText());
+                    prepare.setString(5, (String) employees_gender.getSelectionModel().getSelectedItem());
+                    prepare.setString(6, String.valueOf(sqlDate));
+                    prepare.executeUpdate(); 
+                }
+            }
+            }catch (Exception e) 
+        {e.printStackTrace();
+                    }
+        }*/
+    public void employeesSave() {
+
+        // Use LocalDate for current date
+        java.sql.Date sqlDate = java.sql.Date.valueOf(LocalDate.now());
+
+        String insertEmployee = "INSERT INTO employee (employee_id, password, firstName, lastName, gender, date) VALUES (?, ?, ?, ?, ?, ?)";
+
+        connect = database.connectDb();
+
+        try {
+            Alert alert;
+
+            // Validate input fields
+            if (employees_employeeID.getText().isEmpty()
+                    || employees_password.getText().isEmpty()
+                    || employees_firstName.getText().isEmpty()
+                    || employees_lastName.getText().isEmpty()
+                    || employees_gender.getSelectionModel().getSelectedItem() == null) {
+
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all blank fields");
+                alert.showAndWait();
+            } else {
+                // Check if employee ID already exists
+                String checkExist = "SELECT employee_id FROM employee WHERE employee_id = ?";
+                prepare = connect.prepareStatement(checkExist);
+                prepare.setString(1, employees_employeeID.getText());
+                result = prepare.executeQuery();
+
+                if (result.next()) {
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Employee ID " + employees_employeeID.getText() + " already exists!");
+                    alert.showAndWait();
+                } else {
+                    // Insert new employee record
+                    prepare = connect.prepareStatement(insertEmployee);
+                    prepare.setString(1, employees_employeeID.getText());
+                    prepare.setString(2, employees_password.getText());
+                    prepare.setString(3, employees_firstName.getText());
+                    prepare.setString(4, employees_lastName.getText());
+                    prepare.setString(5, employees_gender.getSelectionModel().getSelectedItem().toString());
+                    prepare.setDate(6, sqlDate);
+                    prepare.executeUpdate();
+
+                    alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Success Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Employee added successfully!");
+                    alert.showAndWait();
+
+                    //  refresh the employee list
+                    employeesShowListData();
+                    //to clear the fields
+                    employeesReset();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String[] genderList = {"Male", "Female"};
+
+    public void employeesGender() {
+        List<String> genderL = new ArrayList<>();
+        for (String data : genderList) {
+            genderL.add(data);
+        }
+        ObservableList listG = FXCollections.observableArrayList(genderL);
+        employees_gender.setItems(listG);
+    }
+
+    public void employeesUpdate() {
+        // Get values from input fields
+        String employeeID = employees_employeeID.getText();
+        String password = employees_password.getText();
+        String firstName = employees_firstName.getText();
+        String lastName = employees_lastName.getText();
+        String gender = (String) employees_gender.getSelectionModel().getSelectedItem();
+
+        connect = database.connectDb();
+
+        try {
+            Alert alert;
+            // Check if the employee ID is empty
+            if (employeeID.isEmpty()) {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Employee ID cannot be empty");
+                alert.showAndWait();
+                return;
+            }
+
+            // Start building the update query dynamically
+            StringBuilder updateQuery = new StringBuilder("UPDATE employee SET ");
+            boolean isFirstField = true;
+
+            // Append each field to the query only if it is not empty
+            if (!password.isEmpty()) {
+                appendField(updateQuery, isFirstField, "password", password);
+                isFirstField = false;
+            }
+            if (!firstName.isEmpty()) {
+                appendField(updateQuery, isFirstField, "firstName", firstName);
+                isFirstField = false;
+            }
+            if (!lastName.isEmpty()) {
+                appendField(updateQuery, isFirstField, "lastName", lastName);
+                isFirstField = false;
+            }
+            if (gender != null && !gender.isEmpty()) {
+                appendField(updateQuery, isFirstField, "gender", gender);
+            }
+
+            // Add the WHERE clause to update the correct employee by ID
+            updateQuery.append(" WHERE employee_id = '").append(employeeID).append("'");
+
+            // Ask for user confirmation before executing the update
+            alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to UPDATE Employee " + employeeID + "?");
+            Optional<ButtonType> option = alert.showAndWait();
+
+            // If the user confirms, execute the update
+            if (option.get().equals(ButtonType.OK)) {
+                statement = connect.createStatement();
+                statement.executeUpdate(updateQuery.toString());
+
+                alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("Information Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Successfully Updated");
+                alert.showAndWait();
+
+                // Update the table view
+                employeesShowListData();
+                // Clear the input fields after the update
+                employeesReset();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void employeesDelete() {
+        String deleteEmployee = "DELETE FROM employee WHERE employee_id = ?";
+        connect = database.connectDb();
+
+        try {
+            Alert alert;
+
+            // Validate: Check if employee ID is entered
+            if (employees_employeeID.getText().isEmpty()) {
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please select an employee to delete");
+                alert.showAndWait();
+                return;
+            }
+
+            // Confirm deletion
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to DELETE Employee ID: "
+                    + employees_employeeID.getText() + "?");
+
+            Optional<ButtonType> option = alert.showAndWait();
+            if (!option.isPresent() || option.get() != ButtonType.OK) {
+                return;
+            }
+
+            // Proceed with deletion
+            try (PreparedStatement pstmt = connect.prepareStatement(deleteEmployee)) {
+                pstmt.setString(1, employees_employeeID.getText());
+                int affectedRows = pstmt.executeUpdate();
+
+                if (affectedRows > 0) {
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Deleted!");
+                    alert.showAndWait();
+                    employeesShowListData();
+                    employeesReset();
+                } else {
+                    alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Warning Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("No employee was deleted!");
+                    alert.showAndWait();
+                }
+            }
+
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Database Error");
+            alert.setHeaderText(null);
+            alert.setContentText("Deletion failed: " + e.getMessage());
+            alert.showAndWait();
+            e.printStackTrace();
+        }
+    }
+
+    public void employeesReset() {
+        employees_employeeID.setText("");
+        employees_password.setText("");
+        employees_firstName.setText("");
+        employees_lastName.setText("");
+        employees_gender.getSelectionModel().clearSelection();
+    }
+
+    public ObservableList<employeeData> employeesListData() {
+        ObservableList<employeeData> emData = FXCollections.observableArrayList();
+        String sql = "SELECT * FROM employee";
+        connect = database.connectDb();
+
+        try {
+
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            while (result.next()) {
+                employeeData employee = new employeeData(
+                        result.getString("employee_id"),
+                        result.getString("password"),
+                        result.getString("firstName"),
+                        result.getString("lastName"),
+                        result.getString("gender"),
+                        result.getDate("date")
+                );
+                emData.add(employee);
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return emData;
+    }
+
+    private ObservableList<employeeData> employeesList;
+
+    public void employeesShowListData() {
+        employeesList = employeesListData();
+
+        employees_col_employeeID.setCellValueFactory(new PropertyValueFactory<>("employeeId"));
+        employees_col_firstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        employees_col_lastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        employees_col_gender.setCellValueFactory(new PropertyValueFactory<>("gender"));
+        employees_col_password.setCellValueFactory(new PropertyValueFactory<>("password"));
+        employees_col_date.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+        employees_tableView.setItems(employeesList);
+    }
+
+    public void employeesSelect() {
+        employeeData employeeD = employees_tableView.getSelectionModel().getSelectedItem();
+        int num = employees_tableView.getSelectionModel().getSelectedIndex();
+
+        if ((num - 1) < -1) {
+            return; // No selection or invalid index
+        }
+
+        employees_employeeID.setText(employeeD.getEmployeeId());
+        employees_password.setText(employeeD.getPassword());
+        employees_firstName.setText(employeeD.getFirstName());
+        employees_lastName.setText(employeeD.getLastName());
+        //employees_gender.setValue(employeeD.getGender());
+    }
+
     public void logout() {
         try {
             Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -672,26 +1128,33 @@ public class adminDashboardController implements Initializable {
             dashboard_form.setVisible(true);
             addProducts_form.setVisible(false);
             employees_form.setVisible(false);
-            dashboard_btn.setStyle("-fx-background-color:linear-gradient(to top right, #896b34, #b8a536);   ");
+            dashboard_btn.setStyle("-fx-background-color: #32CD32; "
+                    + "-fx-border-color: #013220; "
+                    + "-fx-border-width: 0.1px;");
             addProducts_btn.setStyle("-fx-background-color:transparent");
             employees_btn.setStyle("-fx-background-color:transparent");
         } else if (event.getSource() == addProducts_btn) {
             dashboard_form.setVisible(false);
             addProducts_form.setVisible(true);
             employees_form.setVisible(false);
-            addProducts_btn.setStyle("-fx-background-color:linear-gradient(to top right, #896b34, #b8a536);   ");
+            addProducts_btn.setStyle("-fx-background-color: #32CD32; "
+                    + "-fx-border-color: #013220; "
+                    + "-fx-border-width: 0.1px;");
             dashboard_btn.setStyle("-fx-background-color:transparent");
             employees_btn.setStyle("-fx-background-color:transparent");
-
+            addProductsSearch();
             addProductsShowData();
             addProductsStatusList();
         } else if (event.getSource() == employees_btn) {
             dashboard_form.setVisible(false);
             addProducts_form.setVisible(false);
             employees_form.setVisible(true);
-            employees_btn.setStyle("-fx-background-color:linear-gradient(to top right, #896b34, #b8a536);   ");
+            employees_btn.setStyle("-fx-background-color: #32CD32; "
+                    + "-fx-border-color: #013220; "
+                    + "-fx-border-width: 0.1px;");
             addProducts_btn.setStyle("-fx-background-color:transparent");
             dashboard_btn.setStyle("-fx-background-color:transparent");
+            employeesListData();
         }
     }
 
@@ -710,6 +1173,20 @@ public class adminDashboardController implements Initializable {
         displayUsername();
         addProductsShowData();
         addProductsStatusList();
+        employeesShowListData();
+        employeesGender();
+        //to set dashboard as default visible form
+        dashboard_form.setVisible(true);
+        addProducts_form.setVisible(false);
+        employees_form.setVisible(false);
+        // Style dashboard button as active by default
+        dashboard_btn.setStyle("-fx-background-color: #32CD32; "
+                + "-fx-border-color: #013220; "
+                + "-fx-border-width: 0.1px;");
+
+        // Ensure other buttons are styled as inactive
+        addProducts_btn.setStyle("-fx-background-color: transparent;");
+        employees_btn.setStyle("-fx-background-color: transparent;");
     }
 
 }

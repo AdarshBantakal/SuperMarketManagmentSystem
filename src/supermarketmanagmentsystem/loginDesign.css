@@ -1,47 +1,46 @@
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
-*/
-/* 
-    Created on : May 7, 2025, 6:32:58 PM
-    Author     : DELL
-*/
 .left-form{
-    -fx-background-color:linear-gradient(to top right, #64522c,#a8962b);
-    -fx-border-color: #000;
-    -fx-border-width: .4px 0px .4px.4px;/*top right bottom left*/       
+   -fx-background-color:linear-gradient(to top right, #5b5c61, #32CD32, #00ff00)
+;
+    -fx-border-color: #222;
+    -fx-border-width: .4px 0px .4px .4px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 255, 0, 0.15), 10, 0.2, 0, 0);
+    -fx-padding: 40px;/*top right bottom left    */   
+    
 }
 
 .right-form{
     -fx-background-color:#fff;
     -fx-border-color: #000;
-    -fx-border-width: .4px 0px .4px.4px;/*top right bottom left*/       
+    -fx-border-width: .4px 0px .4px.4px;/*top right bottom left   */ 
+    -fx-background-radius: 8px;
 }
 textfield{ 
-    -fx-background-color:linear-gradient(to bottom , #efefef,#eee); 
-    -fx-background-radius:8px; 
-    -fx-border-color: #000; 
-    -fx-border-width:0px 0px .8px 0px; 
-    -fx-font-family: "Tahoma"; 
-    -fx-font-size:13px; 
-    -fx-border-radius: 8px; 
+    -fx-background-color: #333;
+    -fx-text-fill: #fff;
+    -fx-font-size: 14px;
+    -fx-font-family: "Quicksand";
+    -fx-background-radius: 4px;
+    -fx-padding: 10px;
+    -fx-border-color: transparent;
 } 
 .textfield:focused{ 
-    -fx-background-color: #efefef; 
-    -fx-border-width:0px 0px 1.8px 0px;
+      -fx-border-color: #0f0;
+    -fx-border-width: 0 0 2px 0;
+    
 }
 
 .login-btn{ 
--fx-background-color: linear-gradient(to bottom, #2365a7, #213c57); 
--fx-background-radius: 8px; 
--fx-cursor:hand; 
--fx-text-fill:#fff; 
--fx-font-family: "Arial"; 
--fx-font-size:14px; 
+ -fx-background-color: linear-gradient(to top right, #32CD32, #00ff00 );
+    -fx-text-fill: #000;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 6px;
 } 
 
 .login-btn:hover{ 
--fx-background-color: linear-gradient(to bottom, #3d85cc, #295986); 
+-fx-opacity: 0.8;
 } 
 
 .close{
