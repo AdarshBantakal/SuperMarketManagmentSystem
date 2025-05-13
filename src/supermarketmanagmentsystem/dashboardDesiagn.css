@@ -196,10 +196,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 }
 */
 
-/* UNCHANGED STRUCTURES (only colors updated where applicable) */
-/*----------------------------------------------------------------*/
+
 .top-form{
-    -fx-background-color:#fff; /* Kept as-is (matches login's right-form) */
+    -fx-background-color:#fff;
     -fx-border-color: #000;
     -fx-border-width: .4px .4px .2px .4px;      
 }
@@ -209,7 +208,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-cursor: hand;
 }
 .close:hover{
-    -fx-background-color: #dd2f4f; /* Kept as-is (matches login's close hover) */
+    -fx-background-color: #dd2f4f;
 }
 
 .minimize{
@@ -217,25 +216,25 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-cursor: hand;
 }
 .minimize:hover{
-    -fx-background-color: #ddd; /* Kept as-is */
+    -fx-background-color: #ddd;
 }
 
 .semi-top-form{
-    -fx-background-color:#efefef; /* Light gray (matches login's textfield background) */
+    -fx-background-color:#efefef; 
     -fx-border-color: #000;
     -fx-border-width: .2px .4px .8px.4px;     
 }
 
 .nav-form{
-    /* Changed to login's left-form green gradient */
+    
     -fx-background-color: linear-gradient(to top right, #6b6c71, #32CD32, #00ff00);
-    -fx-border-color: #000; /* Original border properties kept */
+    -fx-border-color: #000; 
     -fx-border-width: .4px 0px .4px .4px;
 }
 
 .nav-btn{ 
-    /* Text color changed to match login's hyperlink */
-    -fx-text-fill:#ffff; /* Changed from #fff to black for contrast with green */
+    
+    -fx-text-fill:#ffff;
     -fx-background-color: transparent; 
     -fx-cursor:hand; 
     -fx-font-family: "Tahoma"; 
@@ -245,17 +244,15 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 
 
 .logout-btn{
-    /* Updated to login's green theme */
-    -fx-background-color: #32CD32; /* Original gold (#b58d38) → green */
+   
+    -fx-background-color: #32CD32; 
     -fx-background-radius: 8px;
     -fx-cursor: hand;
 }
 .logout-btn:hover{
-    -fx-background-color: #00ff00; /* Brighter green */
+    -fx-background-color: #00ff00; 
 }
 
-/* REST OF THE CSS (modified for green theme) */
-/*-------------------------------------------*/
 .white-bg{
     -fx-background-color: white;
     -fx-background-radius: 8px;
@@ -295,7 +292,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 
 .combobox {
     -fx-background-color:transparent;
-    -fx-border-color:  #7a7b80 #7a7b80 #7a7b80 #7a7b80; /* Green gradient */
+    -fx-border-color:  #7a7b80 #7a7b80 #7a7b80 #7a7b80;
     -fx-border-width:0.5px 0.5px 0.5px 0.5px;
     -fx-font-family:"Tahoma";
     -fx-font-size:16px;
@@ -320,7 +317,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 }
 
 .Update-btn{
-    -fx-background-color: #2e8b57; /* Darker green */
+    -fx-background-color: #2e8b57; 
     -fx-background-radius:8px;
     -fx-cursor:hand;
     -fx-text-fill:#fff;
@@ -332,7 +329,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 }
 
 .delete-btn{
-    -fx-background-color: #dd2f4f; /* Matches login's close:hover */
+    -fx-background-color: #dd2f4f; 
     -fx-background-radius:8px;
     -fx-cursor:hand;
     -fx-text-fill:#fff;
@@ -344,7 +341,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 }
 
 .clear-btn{
-    -fx-background-color: #369eda; /* Matches login's hyperlink blue */
+    -fx-background-color: #369eda; 
     -fx-background-radius:8px;
     -fx-cursor:hand;
     -fx-text-fill:#fff;
