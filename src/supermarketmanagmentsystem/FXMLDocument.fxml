@@ -15,8 +15,8 @@
          <children>
             <AnchorPane fx:id="super_form" prefHeight="454.0" prefWidth="328.0" styleClass="left-form" stylesheets="@loginDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="334.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <FontAwesomeIcon fill="#fffefe" glyphName="SHOPPING_CART" layoutX="98.0" layoutY="205.0" size="10em" text="" />
-                  <Label layoutX="54.0" layoutY="227.0" text="Super Market Managment" textFill="#fffdfd">
+                  <FontAwesomeIcon fill="#333333" glyphName="SHOPPING_CART" layoutX="98.0" layoutY="205.0" size="10em" text="" />
+                  <Label layoutX="54.0" layoutY="227.0" text="Super Market Managment" textFill="#333333">
                      <font>
                         <Font name="Tahoma" size="20.0" />
                      </font>

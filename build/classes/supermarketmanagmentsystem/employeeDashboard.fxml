@@ -1,32 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
-
 <?import javafx.scene.effect.*?>
-
 <?import javafx.geometry.*?>
-
 <?import javafx.scene.shape.*?>
-
 <?import javafx.scene.text.*?>
-
 <?import de.jensd.fx.glyphs.fontawesome.*?>
-
 <?import javafx.scene.chart.*?>
-
 <?import java.lang.*?>
-
 <?import java.util.*?>
-
 <?import javafx.scene.*?>
-
 <?import javafx.scene.control.*?>
-
 <?import javafx.scene.layout.*?>
 
-
-
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" >
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 
    <children>
 
@@ -66,7 +52,7 @@
 
                      <children>
 
-                        <FontAwesomeIcon glyphName="USER" size="6em" text="" />
+                        <FontAwesomeIcon fill="WHITE" glyphName="USER" size="6em" text="" />
 
                         <Label fx:id="username" styleClass="nav-label" text="EMPLOYEE" />
 

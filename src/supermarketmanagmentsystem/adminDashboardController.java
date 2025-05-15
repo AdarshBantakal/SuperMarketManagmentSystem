@@ -1130,7 +1130,7 @@ public class adminDashboardController implements Initializable {
             employees_form.setVisible(false);
             dashboard_btn.setStyle("-fx-background-color: #32CD32; "
                     + "-fx-border-color: #013220; "
-                    + "-fx-border-width: 0.1px;");
+                    + "-fx-border-width: 0.01px;");
             addProducts_btn.setStyle("-fx-background-color:transparent");
             employees_btn.setStyle("-fx-background-color:transparent");
         } else if (event.getSource() == addProducts_btn) {
@@ -1139,7 +1139,7 @@ public class adminDashboardController implements Initializable {
             employees_form.setVisible(false);
             addProducts_btn.setStyle("-fx-background-color: #32CD32; "
                     + "-fx-border-color: #013220; "
-                    + "-fx-border-width: 0.1px;");
+                    + "-fx-border-width: 0.01px;");
             dashboard_btn.setStyle("-fx-background-color:transparent");
             employees_btn.setStyle("-fx-background-color:transparent");
             addProductsSearch();
@@ -1151,7 +1151,7 @@ public class adminDashboardController implements Initializable {
             employees_form.setVisible(true);
             employees_btn.setStyle("-fx-background-color: #32CD32; "
                     + "-fx-border-color: #013220; "
-                    + "-fx-border-width: 0.1px;");
+                    + "-fx-border-width: 0.01px;");
             addProducts_btn.setStyle("-fx-background-color:transparent");
             dashboard_btn.setStyle("-fx-background-color:transparent");
             employeesListData();
@@ -1182,7 +1182,7 @@ public class adminDashboardController implements Initializable {
         // Style dashboard button as active by default
         dashboard_btn.setStyle("-fx-background-color: #32CD32; "
                 + "-fx-border-color: #013220; "
-                + "-fx-border-width: 0.1px;");
+                + "-fx-border-width: 0.01px;");
 
         // Ensure other buttons are styled as inactive
         addProducts_btn.setStyle("-fx-background-color: transparent;");

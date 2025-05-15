@@ -262,7 +262,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
 }
 
 .card1{
-    -fx-background-color: linear-gradient(to right, #32CD32, #00ff00);
+    -fx-background-color: linear-gradient(to right, 	#98FB98, #32CD32);
     -fx-background-radius: 5px;
 }
 .card2{
@@ -337,7 +337,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-font-family:"Tahoma";
 }
 .delete-btn:hover{
-    -fx-background-color: #ff4444;
+    -fx-background-color: #aa1e3b;
 }
 
 .clear-btn{
