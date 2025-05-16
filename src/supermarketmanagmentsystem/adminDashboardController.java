@@ -1128,7 +1128,7 @@ public class adminDashboardController implements Initializable {
             dashboard_form.setVisible(true);
             addProducts_form.setVisible(false);
             employees_form.setVisible(false);
-            dashboard_btn.setStyle("-fx-background-color: #32CD32; "
+            dashboard_btn.setStyle("-fx-background-color: #008ca6 ; "
                     + "-fx-border-color: #013220; "
                     + "-fx-border-width: 0.01px;");
             addProducts_btn.setStyle("-fx-background-color:transparent");
@@ -1137,7 +1137,7 @@ public class adminDashboardController implements Initializable {
             dashboard_form.setVisible(false);
             addProducts_form.setVisible(true);
             employees_form.setVisible(false);
-            addProducts_btn.setStyle("-fx-background-color: #32CD32; "
+            addProducts_btn.setStyle("-fx-background-color: #005d76; "
                     + "-fx-border-color: #013220; "
                     + "-fx-border-width: 0.01px;");
             dashboard_btn.setStyle("-fx-background-color:transparent");
@@ -1149,7 +1149,7 @@ public class adminDashboardController implements Initializable {
             dashboard_form.setVisible(false);
             addProducts_form.setVisible(false);
             employees_form.setVisible(true);
-            employees_btn.setStyle("-fx-background-color: #32CD32; "
+            employees_btn.setStyle("-fx-background-color:  #003d5c; "
                     + "-fx-border-color: #013220; "
                     + "-fx-border-width: 0.01px;");
             addProducts_btn.setStyle("-fx-background-color:transparent");
@@ -1180,7 +1180,7 @@ public class adminDashboardController implements Initializable {
         addProducts_form.setVisible(false);
         employees_form.setVisible(false);
         // Style dashboard button as active by default
-        dashboard_btn.setStyle("-fx-background-color: #32CD32; "
+        dashboard_btn.setStyle("-fx-background-color: #008ca6 ; "
                 + "-fx-border-color: #013220; "
                 + "-fx-border-width: 0.01px;");
 
