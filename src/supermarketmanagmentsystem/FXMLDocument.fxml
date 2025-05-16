@@ -22,7 +22,7 @@
                      </font>
                   </Label>
                </children></AnchorPane>
-            <AnchorPane fx:id="admin_form" focusTraversable="true" layoutX="325.0" prefHeight="458.0" prefWidth="337.0" styleClass="right-form" stylesheets="@loginDesign.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="325.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="admin_form" layoutX="363.0" prefHeight="458.0" prefWidth="334.0" styleClass="right-form" stylesheets="@loginDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="363.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <FontAwesomeIcon glyphName="USER" layoutX="121.0" layoutY="135.0" size="8em" />
                   <Label layoutX="95.0" layoutY="152.0" text="Admin Sign IN">
@@ -40,7 +40,7 @@
                         <FontAwesomeIcon glyphName="CLOSE" onDragDetected="#close" size="1.2em" />
                      </graphic></Button>
                </children></AnchorPane>
-            <AnchorPane fx:id="employee_form" layoutX="344.0" layoutY="10.0" prefHeight="454.0" prefWidth="337.0" styleClass="right-form" stylesheets="@loginDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="employee_form" layoutX="344.0" layoutY="10.0" prefHeight="458.0" prefWidth="334.0" styleClass="right-form" stylesheets="@loginDesign.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <FontAwesomeIcon glyphName="USER" layoutX="120.0" layoutY="136.0" size="8em" text="" />
                   <Label layoutX="80.0" layoutY="153.0" text="Employee Sign In" textFill="#262728">

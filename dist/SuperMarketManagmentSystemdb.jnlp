@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="SuperMarketManagmentSystemdb.jar" size="42195" download="eager" />
+    <jar href="SuperMarketManagmentSystemdb.jar" size="42257" download="eager" />
     <jar href="lib\commons-logging-1.2.jar" size="61829" download="eager" />
     <jar href="lib\fontawesomefx-8.2.jar" size="180341" download="eager" />
     <jar href="lib\gson-2.3.1 (1).jar" size="210856" download="eager" />
