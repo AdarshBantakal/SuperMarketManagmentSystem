@@ -30,8 +30,8 @@
                         <Font name="Berlin Sans FB" size="25.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="admin_username" layoutX="54.0" layoutY="228.0" onAction="#adminLogin" onDragDetected="#adminLogin" prefHeight="31.0" prefWidth="220.0" promptText="Username" styleClass="textfield" stylesheets="@loginDesign.css" AnchorPane.leftAnchor="57.0" AnchorPane.rightAnchor="54.60000000000002" />
-                  <PasswordField fx:id="admin_password" layoutX="46.0" layoutY="283.4" onAction="#adminLogin" prefHeight="32.0" prefWidth="228.0" promptText="Password" styleClass="textfield" stylesheets="@loginDesign.css" AnchorPane.bottomAnchor="143.0" AnchorPane.leftAnchor="57.0" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="283.0" />
+                  <TextField fx:id="admin_username" focusTraversable="false" layoutX="54.0" layoutY="228.0" onAction="#adminLogin" onDragDetected="#adminLogin" prefHeight="31.0" prefWidth="220.0" promptText="Username" styleClass="textfield" stylesheets="@loginDesign.css" AnchorPane.leftAnchor="57.0" AnchorPane.rightAnchor="54.60000000000002" />
+                  <PasswordField fx:id="admin_password" focusTraversable="false" layoutX="46.0" layoutY="283.4" onAction="#adminLogin" prefHeight="32.0" prefWidth="228.0" promptText="Password" styleClass="textfield" stylesheets="@loginDesign.css" AnchorPane.bottomAnchor="143.0" AnchorPane.leftAnchor="57.0" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="283.0" />
                   <Button fx:id="admin_login" layoutX="107.4" layoutY="333.4" mnemonicParsing="false" onAction="#adminLogin" prefHeight="42.0" prefWidth="99.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="login" AnchorPane.bottomAnchor="79.0" AnchorPane.leftAnchor="107.0" AnchorPane.rightAnchor="122.0" AnchorPane.topAnchor="333.0" />
                   <Hyperlink fx:id="admin_hyperlink" layoutX="80.0" layoutY="399.0" onAction="#switchForm" stylesheets="@loginDesign.css" text="Login Employee Account?">
                      </Hyperlink>
@@ -48,7 +48,7 @@
                         <Font name="Berlin Sans FB" size="25.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="employee_id" layoutX="59.0" layoutY="229.0" onAction="#employeeLogin" prefHeight="30.0" prefWidth="220.0" promptText="Employee ID" styleClass="textfield" stylesheets="@loginDesign.css" />
+                  <TextField fx:id="employee_id" focusTraversable="false" layoutX="59.0" layoutY="229.0" onAction="#employeeLogin" prefHeight="30.0" prefWidth="220.0" promptText="Employee ID" styleClass="textfield" stylesheets="@loginDesign.css" />
                   <PasswordField fx:id="employee_password" layoutX="59.0" layoutY="280.0" onAction="#employeeLogin" prefHeight="30.0" prefWidth="220.0" promptText="Password" styleClass="textfield" stylesheets="@loginDesign.css" AnchorPane.bottomAnchor="143.0" />
                   <Button fx:id="employee_login" layoutX="113.0" layoutY="331.0" mnemonicParsing="false" onAction="#employeeLogin" prefHeight="42.0" prefWidth="100.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="login" AnchorPane.bottomAnchor="81.0" AnchorPane.leftAnchor="113.0" AnchorPane.rightAnchor="116.19999999999993" />
                   <Hyperlink fx:id="employee_hyperlink" layoutX="96.0" layoutY="406.0" onAction="#switchForm" stylesheets="@loginDesign.css" text="Login admin Account?">
