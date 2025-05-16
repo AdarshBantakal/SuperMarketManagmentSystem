@@ -80,7 +80,7 @@
 
                         <!-- Billing Form -->
 
-                        <AnchorPane fx:id="billing_form">
+                        <AnchorPane fx:id="billing_form" >
 
                            <children>
 
