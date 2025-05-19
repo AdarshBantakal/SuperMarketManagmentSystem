@@ -17,6 +17,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -38,6 +39,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.scene.layout.HBox;
 
 public class employeeDashboardController implements Initializable {
 
@@ -53,9 +55,9 @@ public class employeeDashboardController implements Initializable {
     @FXML private AnchorPane main_form;
     @FXML private Text cGSTAmt;
     @FXML private TextField billing_brandName;
- @FXML private TextField txtCustomerName;
-@FXML private TextField txtCustomerPhone;
-@FXML private TextField txtCustomerAddress;
+    @FXML private TextField txtCustomerName;
+    @FXML private TextField txtCustomerPhone;
+    @FXML private TextField txtCustomerAddress;
     @FXML private ComboBox<String> billing_productName;
     @FXML private Label profile_position;
     @FXML private Label profile_name;
@@ -98,6 +100,34 @@ public class employeeDashboardController implements Initializable {
         setupDatabaseConnection();
         loadInitialData();
         setupTableColumns();
+        
+        // Add listener for brand name changes
+        billing_brandName.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty()) {
+                loadProductsForBrand(newValue);
+            }
+        });
+        
+        // Add listener for product name selection
+        billing_productName.setOnAction(e -> {
+            String selectedBrand = billing_brandName.getText();
+            String selectedProduct = billing_productName.getValue();
+            if (selectedBrand != null && selectedProduct != null) {
+                try {
+                    String sql = "SELECT price FROM product WHERE brand = ? AND product_name = ?";
+                    PreparedStatement pstmt = connect.prepareStatement(sql);
+                    pstmt.setString(1, selectedBrand);
+                    pstmt.setString(2, selectedProduct);
+                    ResultSet rs = pstmt.executeQuery();
+                    if (rs.next()) {
+                        // You can display the price somewhere if needed
+                        double price = rs.getDouble("price");
+                    }
+                } catch (SQLException ex) {
+                    showAlert(AlertType.ERROR, "Database Error", ex.getMessage());
+                }
+            }
+        });
     }
 
     private void initializeComponents() {
@@ -115,7 +145,6 @@ public class employeeDashboardController implements Initializable {
         loadCustomers();
         loadProfileData();
         loadAvailableProducts();
-        
     }
     
 
@@ -128,7 +157,6 @@ public class employeeDashboardController implements Initializable {
         billing_checkout_btn.setOnAction(e -> handleBillSubmit());
         availability_search_btn.setOnAction(e -> searchProducts());
 
-        
         minimize.setOnAction(e -> minimize());
     }
 
@@ -164,53 +192,56 @@ public class employeeDashboardController implements Initializable {
     }
    @FXML 
     private void handleCustomerSubmit(ActionEvent event) {
-        System.out.println("handleCustomerSubmit called!"); 
-    String name = txtCustomerName.getText().trim();
-    String phone = txtCustomerPhone.getText().trim();
-    String address = txtCustomerAddress.getText().trim();
-    
-    if (name.isEmpty() || phone.isEmpty()) {
-        showAlert(AlertType.ERROR, "Error", "Name and Phone are required fields");
-        return;
-    }
-
-    try {
-        customerData existingCustomer = customerData.findCustomer(name, phone);
+        String name = txtCustomerName.getText().trim();
+        String phone = txtCustomerPhone.getText().trim();
+        String address = txtCustomerAddress.getText().trim();
         
-        if (existingCustomer != null) {
-            lCusName.setText(existingCustomer.getName());
-            lCusPhone.setText(existingCustomer.getPhone());
-            lCusStreet.setText(existingCustomer.getAddress());
-            showAlert(AlertType.INFORMATION, "Customer Found", "Existing customer loaded");
-        } else {
-            customerData newCustomer = new customerData(name, phone, address);
-            
-            if (customerData.createCustomer(newCustomer)) {
-                showAlert(AlertType.INFORMATION, "Success", "New customer created");
-                loadCustomers();
-                clearCustomerFields();
-            } else {
-                showAlert(AlertType.ERROR, "Error", "Failed to create customer");
-            }
+        if (name.isEmpty() || phone.isEmpty()) {
+            showAlert(AlertType.ERROR, "Error", "Name and Phone are required fields");
+            return;
         }
-    } catch (Exception e) {
-        showAlert(AlertType.ERROR, "Database Error", "Error: " + e.getMessage());
-    }
-}
 
-private void clearCustomerFields() {
-    txtCustomerName.clear();
-    txtCustomerPhone.clear();
-    txtCustomerAddress.clear();
-}
+        try {
+            // First check if customer exists
+            String checkSql = "SELECT * FROM customers WHERE name = ? AND phone = ?";
+            PreparedStatement checkStmt = connect.prepareStatement(checkSql);
+            checkStmt.setString(1, name);
+            checkStmt.setString(2, phone);
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                // Customer exists, load their details
+                lCusName.setText(rs.getString("name"));
+                lCusPhone.setText(rs.getString("phone"));
+                lCusStreet.setText(rs.getString("address"));
+                showAlert(AlertType.INFORMATION, "Customer Found", "Existing customer loaded");
+            } else {
+                // Customer doesn't exist, create new customer
+                String insertSql = "INSERT INTO customers (name, phone, address) VALUES (?, ?, ?)";
+                PreparedStatement insertStmt = connect.prepareStatement(insertSql);
+                insertStmt.setString(1, name);
+                insertStmt.setString(2, phone);
+                insertStmt.setString(3, address);
+                insertStmt.executeUpdate();
+
+                // Display the new customer's details
+                lCusName.setText(name);
+                lCusPhone.setText(phone);
+                lCusStreet.setText(address);
+                showAlert(AlertType.INFORMATION, "Success", "New customer created");
+            }
+            
+            // Clear the input fields
+            txtCustomerName.clear();
+            txtCustomerPhone.clear();
+            txtCustomerAddress.clear();
+            
+        } catch (SQLException e) {
+            showAlert(AlertType.ERROR, "Database Error", e.getMessage());
+        }
+    }
 
     private void setupTableColumns() {
-        /*colBrandName.setCellValueFactory(new PropertyValueFactory<>("brand"));
-        colProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
-        colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        colTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
-        tblBilling.setItems(billItems);*/
         colBrandName.setCellValueFactory(new PropertyValueFactory<>("brand"));
         colProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
@@ -232,35 +263,39 @@ private void clearCustomerFields() {
 
         try {
             int quantity = Integer.parseInt(quantityStr);
-            if (quantity <= 0) throw new NumberFormatException();
-
-            String sql = "SELECT price, stock FROM product WHERE brand = ? AND product_name = ?";
-            try (PreparedStatement pstmt = connect.prepareStatement(sql)) {
-                pstmt.setString(1, brand);
-                pstmt.setString(2, product);
-                ResultSet rs = pstmt.executeQuery();
-
-                if (rs.next()) {
-                    int stock = rs.getInt("stock");
-                    if (stock < quantity) {
-                        showAlert(AlertType.WARNING, "Stock Error", "Available stock: " + stock);
-                        return;
-                    }
-
-                    billItems.add(new BillItem(
-                        brand,
-                        product,
-                        rs.getDouble("price"),
-                        quantity
-                    ));
-                    updateTotals();
-                    clearFields();
-                } else {
-                    showAlert(AlertType.ERROR, "Error", "Product not found");
-                }
+            if (quantity <= 0) {
+                showAlert(AlertType.ERROR, "Error", "Quantity must be greater than 0");
+                return;
             }
-        } catch (Exception e) {
-            showAlert(AlertType.ERROR, "Input Error", "Invalid quantity format");
+
+            String sql = "SELECT price, stock, brand FROM product WHERE brand LIKE ? AND product_name = ?";
+            PreparedStatement pstmt = connect.prepareStatement(sql);
+            pstmt.setString(1, "%" + brand + "%");
+            pstmt.setString(2, product);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                double price = rs.getDouble("price");
+                int stock = rs.getInt("stock");
+                String exactBrand = rs.getString("brand"); // Get the exact brand name from DB
+
+                if (stock < quantity) {
+                    showAlert(AlertType.WARNING, "Stock Error", "Available stock: " + stock);
+                    return;
+                }
+
+                BillItem newItem = new BillItem(exactBrand, product, price, quantity);
+                billItems.add(newItem);
+                tblBilling.setItems(billItems);
+                updateTotals();
+                clearFields();
+            } else {
+                showAlert(AlertType.ERROR, "Error", "Product not found");
+            }
+        } catch (NumberFormatException e) {
+            showAlert(AlertType.ERROR, "Error", "Invalid quantity format");
+        } catch (SQLException e) {
+            showAlert(AlertType.ERROR, "Database Error", e.getMessage());
         }
     }
 
@@ -385,7 +420,7 @@ private void clearCustomerFields() {
 
     private void clearFields() {
         billing_brandName.clear();
-        billing_productName.getSelectionModel().clearSelection();
+        billing_productName.setValue(null);
         txtQuantity.clear();
     }
 
@@ -462,42 +497,53 @@ private void clearCustomerFields() {
     }
 }
     
-     public void searchProducts() {
-        String searchText = availability_search.getText().trim();
-        
-        if (searchText.isEmpty()) {
-            loadAvailableProducts();
-            return;
-        }
+     @FXML
+    private void searchProducts() {
+        String searchText = billing_brandName.getText().trim();
         
         try {
-            String sql = "SELECT brand, product_name, stock, price FROM product " +
-                         "WHERE status = 'Available' AND " +
-                         "(brand LIKE ? OR product_name LIKE ?)";
-            connect = database.connectDb();
-            prepare = connect.prepareStatement(sql);
-            prepare.setString(1, "%" + searchText + "%");
-            prepare.setString(2, "%" + searchText + "%");
-            result = prepare.executeQuery();
+            String sql = "SELECT DISTINCT brand, product_name FROM product WHERE brand LIKE ? OR product_name LIKE ? ORDER BY brand, product_name";
+            PreparedStatement pstmt = connect.prepareStatement(sql);
+            pstmt.setString(1, "%" + searchText + "%");
+            pstmt.setString(2, "%" + searchText + "%");
+            ResultSet rs = pstmt.executeQuery();
             
-            ObservableList<Product> productList = FXCollections.observableArrayList();
+            ObservableList<String> products = FXCollections.observableArrayList();
             
-            while (result.next()) {
-                productList.add(new Product(
-                    result.getString("brand"),
-                    result.getString("product_name"),
-                    result.getInt("stock"),
-                    result.getDouble("price")
-                ));
+            while (rs.next()) {
+                String product = rs.getString("product_name");
+                products.add(product);
             }
             
-            availability_table.setItems(productList);
+            billing_productName.setItems(products);
+                
         } catch (SQLException e) {
-            e.printStackTrace();
             showAlert(AlertType.ERROR, "Database Error", e.getMessage());
         }
     }
 
+    private void loadProductsForBrand(String brand) {
+        if (brand == null || brand.trim().isEmpty()) {
+            billing_productName.setItems(FXCollections.observableArrayList());
+            return;
+        }
+        
+        try {
+            String sql = "SELECT product_name FROM product WHERE brand LIKE ? ORDER BY product_name";
+            PreparedStatement pstmt = connect.prepareStatement(sql);
+            pstmt.setString(1, "%" + brand + "%");
+            ResultSet rs = pstmt.executeQuery();
+            
+            ObservableList<String> products = FXCollections.observableArrayList();
+            while (rs.next()) {
+                products.add(rs.getString("product_name"));
+            }
+            
+            billing_productName.setItems(products);
+        } catch (SQLException e) {
+            showAlert(AlertType.ERROR, "Database Error", e.getMessage());
+        }
+    }
 
     private void loadProfileData() {
         try {
@@ -546,7 +592,7 @@ private void clearCustomerFields() {
 
                 Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
                 Stage loginStage = new Stage();
-               // loginStage.initStyle(StageStyle.UNDECORATED);
+               loginStage.initStyle(StageStyle.UNDECORATED);
                 loginStage.setScene(new Scene(root));
                 loginStage.show();
             }

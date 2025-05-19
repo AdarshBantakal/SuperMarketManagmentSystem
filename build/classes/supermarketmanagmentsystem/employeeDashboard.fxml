@@ -119,11 +119,11 @@
                                        <Text fx:id="lGSTin" />
                                      <HBox alignment="CENTER_LEFT" spacing="20">
                                         <children>
-                                                                  <TextField fx:id="txtCustomerName" />
-                                                                  <TextField fx:id="txtCustomerPhone" />
-                                                                  <TextField fx:id="txtCustomerAddress" />
-                                            <JFXComboBox fx:id="comboBoxCustomer" prefWidth="200" promptText="Select Customer" />
-                                            <JFXButton onAction="#handleCustomerSubmit" prefHeight="31.0" prefWidth="148.0" styleClass="jfx-button1" text="Load Customer" />
+                                                                  <TextField fx:id="txtCustomerName" prefWidth="150" promptText="Customer Name" />
+                                                                  <TextField fx:id="txtCustomerPhone" prefWidth="120" promptText="Phone Number" />
+                                                                  <TextField fx:id="txtCustomerAddress" prefWidth="200" promptText="Address" />
+                                            <JFXComboBox fx:id="comboBoxCustomer" prefWidth="150" promptText="Select Customer" />
+                                            <JFXButton onAction="#handleCustomerSubmit" prefHeight="31.0" prefWidth="120.0" styleClass="jfx-button1" text="Load Customer" />
                                         </children>
                                      </HBox>
                                    </children>
@@ -153,8 +153,8 @@
                       <top>
                           <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 10 20 20 20;">
                              <children>
-                                 <TextField fx:id="billing_brandName" onAction="#searchProducts" prefWidth="150" promptText="Brand Name" />
-                                                      <ComboBox fx:id="billing_productName" onAction="#searchProducts" prefHeight="35.0" prefWidth="167.0" promptText="Product Name" styleClass="combobox" />
+                                 <TextField fx:id="billing_brandName" onKeyReleased="#searchProducts" prefWidth="150" promptText="Brand Name" />
+                                 <ComboBox fx:id="billing_productName" onAction="#searchProducts" prefHeight="35.0" prefWidth="167.0" promptText="Product Name" styleClass="combobox" />
                                  <TextField fx:id="txtQuantity" prefWidth="100" promptText="Quantity" />
                                  <JFXButton fx:id="billing_add_btn" onAction="#handleAdd" prefWidth="120" styleClass="add-btn" text="Add Item" />
                                  <JFXButton fx:id="billing_delete_btn" onAction="#handleDelete" prefWidth="120" styleClass="delete-btn" text="Delete Item" />
@@ -185,14 +185,8 @@
                                  </HBox>
                                  <HBox alignment="CENTER_RIGHT" spacing="20">
                                     <children>
-                                        <Text text="CGST (9%):" />
-                                        <Text fx:id="cGSTAmt" text="0.00" />
-                                    </children>
-                                 </HBox>
-                                 <HBox alignment="CENTER_RIGHT" spacing="20">
-                                    <children>
-                                        <Text text="SGST (9%):" />
-                                        <Text fx:id="sGSTAmt" text="0.00" />
+                                        <Text text="GST:" />
+                                        <Text fx:id="gstAmount" text="0.00" />
                                     </children>
                                  </HBox>
                                  <HBox alignment="CENTER_RIGHT" spacing="20">

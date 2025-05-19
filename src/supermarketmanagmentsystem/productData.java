@@ -15,13 +15,15 @@ public class productData {
     private String productName;
     private String status;
     private Double price;
+    private Double gstRate;
 
-    public productData(String productId, String brand, String productName, String status, Double price) {
+    public productData(String productId, String brand, String productName, String status, Double price, Double gstRate) {
         this.productId = productId;
         this.brand = brand;
         this.productName = productName;
         this.status = status;
         this.price = price;
+        this.gstRate = gstRate;
     }
 
     public String getProductId() {
@@ -42,5 +44,9 @@ public class productData {
 
     public Double getPrice() {
         return price;
+    }
+
+    public Double getGstRate() {
+        return gstRate;
     }
 }

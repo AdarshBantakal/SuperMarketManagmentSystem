@@ -244,6 +244,13 @@ public class adminDashboardController implements Initializable {
 
     @FXML
     private Label username;
+
+    @FXML
+    private TextField addProducts_gstRate;
+
+    @FXML
+    private TableColumn<productData, Double> addProducts_col_gstRate;
+
     private double x = 0;
     private double y = 0;
 
@@ -317,7 +324,7 @@ public class adminDashboardController implements Initializable {
         }
     }*/
     public void addProductsAdd() {
-        String insertProduct = "INSERT INTO product (product_id, brand, product_name, status, price) VALUES (?, ?, ?, ?, ?)";
+        String insertProduct = "INSERT INTO product (product_id, brand, product_name, status, price, gst_rate) VALUES (?, ?, ?, ?, ?, ?)";
         connect = database.connectDb();
 
         try {
@@ -328,7 +335,8 @@ public class adminDashboardController implements Initializable {
                     || addProducts_brandName.getText().isEmpty()
                     || addProducts_productName.getText().isEmpty()
                     || addProducts_status.getSelectionModel().getSelectedItem() == null
-                    || addProducts_price.getText().isEmpty()) {
+                    || addProducts_price.getText().isEmpty()
+                    || addProducts_gstRate.getText().isEmpty()) {
 
                 alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error Message");
@@ -361,7 +369,7 @@ public class adminDashboardController implements Initializable {
                 insertStmt.setString(3, addProducts_productName.getText());
                 insertStmt.setString(4, (String) addProducts_status.getSelectionModel().getSelectedItem());
 
-                // Handle numeric conversion
+                // Handle numeric conversion for price
                 try {
                     double price = Double.parseDouble(addProducts_price.getText());
                     insertStmt.setDouble(5, price);
@@ -372,16 +380,31 @@ public class adminDashboardController implements Initializable {
                     return;
                 }
 
-                insertStmt.executeUpdate();  // CORRECT execute method
+                // Handle numeric conversion for GST rate
+                try {
+                    double gstRate = Double.parseDouble(addProducts_gstRate.getText());
+                    if (gstRate < 0 || gstRate > 100) {
+                        alert = new Alert(AlertType.ERROR);
+                        alert.setContentText("GST rate must be between 0 and 100");
+                        alert.showAndWait();
+                        return;
+                    }
+                    insertStmt.setDouble(6, gstRate);
+                } catch (NumberFormatException e) {
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setContentText("Invalid GST rate format");
+                    alert.showAndWait();
+                    return;
+                }
+
+                insertStmt.executeUpdate();
 
                 alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle("Information Message");
                 alert.setHeaderText(null);
                 alert.setContentText("Successfully Added!");
                 alert.showAndWait();
-                //to add the data on table view
                 addProductsShowData();
-                // //to clear the view once added the data
                 addProductsClear();
             }
 
@@ -450,77 +473,88 @@ public class adminDashboardController implements Initializable {
         }
     }*/
     public void addProductsUpdate() {
-        // Get values from fields
-        String productID = addProducts_productID.getText();
-        String brandName = addProducts_brandName.getText();
-        String productName = addProducts_productName.getText();
-        String status = (String) addProducts_status.getSelectionModel().getSelectedItem();
-        String price = addProducts_price.getText();
-
+        String updateProduct = "UPDATE product SET brand = ?, product_name = ?, status = ?, price = ?, gst_rate = ? WHERE product_id = ?";
         connect = database.connectDb();
 
         try {
             Alert alert;
-            // Check if the product ID is empty
-            if (productID.isEmpty()) {
+
+            // Validate fields
+            if (addProducts_productID.getText().isEmpty()
+                    || addProducts_brandName.getText().isEmpty()
+                    || addProducts_productName.getText().isEmpty()
+                    || addProducts_status.getSelectionModel().getSelectedItem() == null
+                    || addProducts_price.getText().isEmpty()
+                    || addProducts_gstRate.getText().isEmpty()) {
+
                 alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Error Message");
                 alert.setHeaderText(null);
-                alert.setContentText("Product ID cannot be empty");
+                alert.setContentText("Please fill all blank fields");
                 alert.showAndWait();
                 return;
             }
 
-            // Start building the update query dynamically
-            StringBuilder updateQuery = new StringBuilder("UPDATE product SET ");
-            boolean isFirstField = true;
-
-            // Append each field to the query only if it is not empty
-            if (!brandName.isEmpty()) {
-                appendField(updateQuery, isFirstField, "brand", brandName);
-                isFirstField = false;
-            }
-            if (!productName.isEmpty()) {
-                appendField(updateQuery, isFirstField, "product_name", productName);
-                isFirstField = false;
-            }
-            if (status != null && !status.isEmpty()) {
-                appendField(updateQuery, isFirstField, "status", status);
-                isFirstField = false;
-            }
-            if (!price.isEmpty()) {
-                appendField(updateQuery, isFirstField, "price", price);
-            }
-            // Add the WHERE clause to update the correct product by ID
-            updateQuery.append(" WHERE product_id = '").append(productID).append("'");
-
-            // Execute the update query
-            statement = connect.createStatement();
-            statement.executeUpdate(updateQuery.toString());
-
-            // Ask for user confirmation before executing the update
+            // Confirmation dialog
             alert = new Alert(AlertType.CONFIRMATION);
             alert.setTitle("Confirmation Message");
             alert.setHeaderText(null);
-            alert.setContentText("Are you sure you want to UPDATE Product " + productID + "?");
+            alert.setContentText("Are you sure you want to UPDATE Product " + addProducts_productID.getText() + "?");
             Optional<ButtonType> option = alert.showAndWait();
 
-            // If the user confirms, show an information alert and update the table view
             if (option.get().equals(ButtonType.OK)) {
-                alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Information Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Successfully Updated");
-                alert.showAndWait();
+                try (PreparedStatement pstmt = connect.prepareStatement(updateProduct)) {
+                    pstmt.setString(1, addProducts_brandName.getText());
+                    pstmt.setString(2, addProducts_productName.getText());
+                    pstmt.setString(3, (String) addProducts_status.getSelectionModel().getSelectedItem());
 
-                // Update the table view
-                addProductsShowData();
-                // Clear the input fields after the update
-                addProductsClear();
+                    // Handle numeric conversion for price
+                    try {
+                        double price = Double.parseDouble(addProducts_price.getText());
+                        pstmt.setDouble(4, price);
+                    } catch (NumberFormatException e) {
+                        alert = new Alert(AlertType.ERROR);
+                        alert.setContentText("Invalid price format");
+                        alert.showAndWait();
+                        return;
+                    }
+
+                    // Handle numeric conversion for GST rate
+                    try {
+                        double gstRate = Double.parseDouble(addProducts_gstRate.getText());
+                        if (gstRate < 0 || gstRate > 100) {
+                            alert = new Alert(AlertType.ERROR);
+                            alert.setContentText("GST rate must be between 0 and 100");
+                            alert.showAndWait();
+                            return;
+                        }
+                        pstmt.setDouble(5, gstRate);
+                    } catch (NumberFormatException e) {
+                        alert = new Alert(AlertType.ERROR);
+                        alert.setContentText("Invalid GST rate format");
+                        alert.showAndWait();
+                        return;
+                    }
+
+                    pstmt.setString(6, addProducts_productID.getText());
+                    pstmt.executeUpdate();
+
+                    alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Updated!");
+                    alert.showAndWait();
+                    addProductsShowData();
+                    addProductsClear();
+                }
             }
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Database Error");
+            alert.setContentText("Error: " + e.getMessage());
+            alert.showAndWait();
         }
     }
 
@@ -538,6 +572,7 @@ public class adminDashboardController implements Initializable {
         addProducts_productName.setText("");
         addProducts_status.getSelectionModel().clearSelection();
         addProducts_price.setText("");
+        addProducts_gstRate.setText("");
     }
 
     /*public void addProductsDelete() {
@@ -723,7 +758,8 @@ public class adminDashboardController implements Initializable {
                         result.getString("brand"),
                         result.getString("product_name"),
                         result.getString("status"),
-                        result.getDouble("price"));
+                        result.getDouble("price"),
+                        result.getDouble("gst_rate"));
                 prodList.add(prod);
             }
         } catch (Exception e) {
@@ -741,6 +777,7 @@ public class adminDashboardController implements Initializable {
         addProducts__col_productName.setCellValueFactory(new PropertyValueFactory<>("productName"));
         addProducts__col_status.setCellValueFactory(new PropertyValueFactory<>("status"));
         addProducts_col_price.setCellValueFactory(new PropertyValueFactory<>("price"));
+        addProducts_col_gstRate.setCellValueFactory(new PropertyValueFactory<>("gstRate"));
         addProducts_tableView.setItems(addProductsList);
     }
 
@@ -754,6 +791,7 @@ public class adminDashboardController implements Initializable {
         addProducts_brandName.setText(prod.getBrand());
         addProducts_productName.setText(prod.getProductName());
         addProducts_price.setText(String.valueOf(prod.getPrice()));
+        addProducts_gstRate.setText(String.valueOf(prod.getGstRate()));
     }
 
     /*public void employeesSave() {
