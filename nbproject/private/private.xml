@@ -5,8 +5,11 @@
         <group>
             <file>file:/E:/supermarketProject/SuperMarketManagmentSystem/src/supermarketmanagmentsystem/FXMLDocument.fxml</file>
             <file>file:/E:/supermarketProject/SuperMarketManagmentSystem/src/supermarketmanagmentsystem/FXMLDocumentController.java</file>
+            <file>file:/E:/supermarketProject/SuperMarketManagmentSystem/src/supermarketmanagmentsystem/BillController.java</file>
             <file>file:/E:/supermarketProject/SuperMarketManagmentSystem/src/supermarketmanagmentsystem/loginDesign.css</file>
+            <file>file:/E:/supermarketProject/SuperMarketManagmentSystem/src/supermarketmanagmentsystem/employeeDashboardController.java</file>
             <file>file:/E:/supermarketProject/SuperMarketManagmentSystem/src/supermarketmanagmentsystem/employeeDashboard.fxml</file>
+            <file>file:/E:/supermarketProject/SuperMarketManagmentSystem/src/supermarketmanagmentsystem/adminDashboardController.java</file>
         </group>
     </open-files>
 </project-private>

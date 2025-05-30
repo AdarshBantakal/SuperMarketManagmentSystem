@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -14,51 +13,31 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-<?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXComboBox?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="supermarketmanagmentsystem.employeeDashboardController">
-
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="supermarketmanagmentsystem.employeeDashboardController">
    <children>
-
       <AnchorPane fx:id="main_form" prefHeight="600.0" prefWidth="1100.0" stylesheets="@dashboardDesiagn.css">
-
          <children>
-
             <BorderPane prefHeight="600.0" prefWidth="1100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-
                <top>
-
                   <AnchorPane prefHeight="43.0" prefWidth="0.0" styleClass="top-form" stylesheets="@dashboardDesiagn.css" BorderPane.alignment="CENTER">
-
                      <children>
-
                         <Label layoutX="20.0" layoutY="7.0" styleClass="header-label" text="Employee Dashboard | Supermarket Management System" />
-
-                        <Button fx:id="close" layoutX="1050.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="50.0" styleClass="close">
-
+                        <Button fx:id="close" layoutX="1050.0" mnemonicParsing="false" onAction="#close" prefHeight="30.0" prefWidth="50.0" styleClass="close">
                            <graphic>
-
                               <FontAwesomeIcon glyphName="CLOSE" size="1.2em" />
-
-                           </graphic></Button>
-                        <Button fx:id="minimize" layoutX="1007.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="43.0" styleClass="minimize">
+                           </graphic>
+                        </Button>
+                        <Button fx:id="minimize" layoutX="1007.0" mnemonicParsing="false" onAction="#minimize" prefHeight="30.0" prefWidth="43.0" styleClass="minimize">
                            <graphic>
                               <FontAwesomeIcon glyphName="MINUS" size="1.2em" />
                            </graphic>
                         </Button>
-
                      </children>
-
                   </AnchorPane>
-
                </top>
-
                
-
                <left>
-
                   <VBox prefWidth="200.0" styleClass="nav-form" stylesheets="@dashboardDesiagn.css">
                      <children>
                         <VBox alignment="TOP_CENTER" prefHeight="482.0" prefWidth="199.0" spacing="10">
@@ -71,7 +50,7 @@
                         
                         <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10 0 10 20;">
                            <children>
-                              <Button fx:id="logout" mnemonicParsing="false" prefHeight="40.0" prefWidth="42.0" styleClass="logout-btn" textFill="WHITE">
+                              <Button fx:id="logout" mnemonicParsing="false" onAction="#logout" prefHeight="40.0" prefWidth="42.0" styleClass="logout-btn" textFill="WHITE">
                                  <graphic>
                                     <FontAwesomeIcon fill="WHITE" glyphName="SIGN_OUT" size="1.2em" />
                                  </graphic>
@@ -85,19 +64,12 @@
                         </HBox>
                      </children>
                   </VBox>
-
                </left>
-
                
-
                <center>
-
                   <StackPane fx:id="content_area" prefHeight="579.0" prefWidth="901.0">
-
                      <children>
-
                         <!-- Billing Form -->
-
                         <AnchorPane fx:id="billing_form">
                            <children>
                               <StackPane prefHeight="558.0" prefWidth="899.0">
@@ -110,14 +82,13 @@
                                                    <children>
                                                       <HBox spacing="10">
                                                          <children>
-                                                            <Text fx:id="lGSTin" />
+                                                            <Label fx:id="lGSTin" />
                                                             <HBox alignment="CENTER_LEFT" spacing="20">
                                                                <children>
-                                                                  <JFXComboBox fx:id="comboBoxCustomer" prefWidth="150" promptText="Select Customer" />
-                                                                  <JFXButton fx:id="loadCustomer_btn" onAction="#handleCustomerSubmit" prefWidth="120" styleClass="add-btn" text="Load Customer" />
-                                                                  <TextField fx:id="txtCustomerName" prefWidth="150" promptText="Customer Name" />
-                                                                  <TextField fx:id="txtCustomerPhone" prefWidth="120" promptText="Phone Number" />
-                                                                  <TextField fx:id="txtCustomerAddress" prefWidth="200" promptText="Address" />
+                                                                  <TextField fx:id="txtCustomerName" prefHeight="26.0" prefWidth="185.0" promptText="Customer Name" />
+                                                                  <TextField fx:id="txtCustomerPhone" prefHeight="26.0" prefWidth="159.0" promptText="Phone Number" />
+                                                                  <TextField fx:id="txtCustomerAddress" prefHeight="26.0" prefWidth="282.0" promptText="Address" />
+                                                                  <Button fx:id="loadCustomer_btn" onAction="#handleCustomerSubmit" prefHeight="31.0" prefWidth="169.0" styleClass="add-btn" text="Load Customer" />
                                                                </children>
                                                             </HBox>
                                                          </children>
@@ -126,16 +97,12 @@
                                                 </VBox>
                                                 <HBox spacing="10">
                                                    <children>
-                                                      <Text text="Customer Name:" wrappingWidth="89.96923828125" />
-                                                      <Text fx:id="lCusName" wrappingWidth="126.39996647834778" />
-                                                      <Text style="-fx-padding-left: 20;" text="Phone no:" wrappingWidth="59.650455474853516" />
-                                                      <Text fx:id="lCusPhone" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="142.39990830421448" />
-                                                      <Text layoutX="151.0" layoutY="30.0" style="-fx-padding-left: 20;" text="Address:" wrappingWidth="48.650390625">
-                                                         <HBox.margin>
-                                                            <Insets />
-                                                         </HBox.margin>
-                                                      </Text>
-                                                      <Text fx:id="lCusStreet" wrappingWidth="298.40014147758484" />
+                                                      <Label text="Customer Name: " />
+                                                      <Label fx:id="lCusName" prefHeight="18.0" prefWidth="98.0" />
+                                                      <Label style="-fx-padding-left: 20;" text="Phone no: " />
+                                                      <Label fx:id="lCusPhone" prefHeight="18.0" prefWidth="118.0" />
+                                                      <Label layoutX="151.0" layoutY="30.0" style="-fx-padding-left: 20;" text="Address: " />
+                                                      <Label fx:id="lCusStreet" prefHeight="18.0" prefWidth="382.0" />
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -148,10 +115,10 @@
                                                 <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 10 20 20 20;">
                                                    <children>
                                                       <TextField fx:id="billing_brandName" onKeyReleased="#searchProducts" prefWidth="150" promptText="Brand Name" />
-                                                      <JFXComboBox fx:id="billing_productName" onAction="#searchProducts" prefHeight="35.0" prefWidth="167.0" promptText="Product Name" styleClass="combobox" />
+                                                      <ComboBox fx:id="billing_productName" onAction="#searchProducts" prefHeight="35.0" prefWidth="167.0" promptText="Product Name" styleClass="combobox" />
                                                       <TextField fx:id="txtQuantity" prefWidth="100" promptText="Quantity" />
-                                                      <JFXButton fx:id="billing_add_btn" onAction="#handleAdd" prefWidth="120" styleClass="add-btn" text="Add Item" />
-                                                      <JFXButton fx:id="billing_delete_btn" onAction="#handleDelete" prefWidth="120" styleClass="delete-btn" text="Delete Item" />
+                                                      <Button fx:id="billing_add_btn" onAction="#handleAdd" prefWidth="120" styleClass="add-btn" text="Add Item" />
+                                                      <Button fx:id="billing_delete_btn" onAction="#handleDelete" prefWidth="120" styleClass="delete-btn" text="Delete Item" />
                                                    </children>
                                                 </HBox>
                                              </top>
@@ -173,26 +140,26 @@
                                                    <children>
                                                       <HBox alignment="CENTER_RIGHT" spacing="20">
                                                          <children>
-                                                            <Text text="Subtotal:" />
-                                                            <Text fx:id="lTotalAmountNum" style="-fx-font-weight: bold;" text="0.00" />
+                                                            <Label text="Subtotal:" />
+                                                            <Label fx:id="lTotalAmountNum" style="-fx-font-weight: bold;" text="0.00" />
                                                          </children>
                                                       </HBox>
                                                       <HBox alignment="CENTER_RIGHT" spacing="20">
                                                          <children>
-                                                            <Text text="GST (18%):" />
-                                                            <Text fx:id="gstAmount" text="0.00" />
+                                                            <Label text="GST (18%):" />
+                                                            <Label fx:id="gstAmount" text="0.00" />
                                                          </children>
                                                       </HBox>
                                                       <HBox alignment="CENTER_RIGHT" spacing="20">
                                                          <children>
-                                                            <Text style="-fx-font-weight: bold;" text="Grand Total:" />
-                                                            <Text fx:id="lTotalPlusTaxNum" style="-fx-font-weight: bold;" text="0.00" />
+                                                            <Label style="-fx-font-weight: bold;" text="Grand Total:" />
+                                                            <Label fx:id="lTotalPlusTaxNum" style="-fx-font-weight: bold;" text="0.00" />
                                                          </children>
                                                       </HBox>
                                                       <HBox alignment="CENTER_RIGHT" spacing="20">
                                                          <children>
-                                                            <JFXButton fx:id="biiling_calculate_btn" onAction="#handleCalculate" prefWidth="120" styleClass="Update-btn" text="Calculate" />
-                                                            <JFXButton fx:id="billing_checkout_btn" onAction="#handleBillSubmit" prefWidth="120" styleClass="clear-btn" text="Checkout" />
+                                                            <Button fx:id="biiling_calculate_btn" onAction="#handleCalculate" prefWidth="120" styleClass="Update-btn" text="Calculate" />
+                                                            <Button fx:id="billing_checkout_btn" onAction="#handleBillSubmit" prefWidth="120" styleClass="clear-btn" text="Checkout" />
                                                          </children>
                                                       </HBox>
                                                    </children>
@@ -205,19 +172,11 @@
                               </StackPane>
                            </children>
                         </AnchorPane>
-
                      </children>
-
                   </StackPane>
-
                </center>
-
             </BorderPane>
-
          </children>
-
       </AnchorPane>
-
    </children>
-
 </StackPane>

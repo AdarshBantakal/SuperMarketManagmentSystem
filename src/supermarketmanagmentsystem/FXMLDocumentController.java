@@ -44,88 +44,151 @@ public class FXMLDocumentController implements Initializable {
         String username = login_username.getText();
         String password = login_password.getText();
 
-        connect = database.connectDb();
-
         try {
-            Alert alert;
+            // Test database connection first
+            connect = database.connectDb();
+            if (connect == null) {
+                showError("Database Connection Error", "Could not connect to the database");
+                return;
+            }
 
             if (username.isEmpty() || password.isEmpty()) {
-                alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Error Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Please fill all blank fields");
-                alert.showAndWait();
+                showError("Input Error", "Please fill all blank fields");
                 return;
             }
 
-            String adminQuery = "SELECT * FROM admin WHERE username = ? AND password = ?";
-            prepare = connect.prepareStatement(adminQuery);
-            prepare.setString(1, username);
-            prepare.setString(2, password);
-            result = prepare.executeQuery();
+            // Try admin login
+            try {
+                String adminQuery = "SELECT * FROM admin WHERE username = ? AND password = ?";
+                prepare = connect.prepareStatement(adminQuery);
+                prepare.setString(1, username);
+                prepare.setString(2, password);
+                result = prepare.executeQuery();
 
-            if (result.next()) {
+                if (result.next()) {
+                    getData.username = username;
+                    showInfo("Success", "Successfully Login as Admin!");
+                    
+                    try {
+                        // Load admin dashboard
+                        login_btn.getScene().getWindow().hide();
+                        
+                        // Get the resource URL
+                        URL location = getClass().getResource("/supermarketmanagmentsystem/adminDashboard.fxml");
+                        if (location == null) {
+                            showError("FXML Error", "Could not find adminDashboard.fxml");
+                            return;
+                        }
+                        
+                        FXMLLoader loader = new FXMLLoader(location);
+                        Parent root = loader.load();
+                        
+                        if (root == null) {
+                            showError("FXML Error", "Could not load adminDashboard.fxml");
+                            return;
+                        }
 
-                getData.username = username;
-                alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Information Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Successfully Login as Admin!");
-                alert.showAndWait();
-
-                login_btn.getScene().getWindow().hide();
-                Parent root = FXMLLoader.load(getClass().getResource("adminDashboard.fxml"));
-                Stage stage = new Stage();
-
-                root.setOnMousePressed((MouseEvent event) -> {
-                    x = event.getSceneX();
-                    y = event.getSceneY();
-                });
-
-                root.setOnMouseDragged((MouseEvent event) -> {
-                    stage.setX(event.getScreenX() - x);
-                    stage.setY(event.getScreenY() - y);
-                });
-
-                stage.initStyle(StageStyle.TRANSPARENT);
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.show();
+                        Stage stage = new Stage();
+                        setupStage(root, stage);
+                        stage.show();
+                        return;
+                    } catch (Exception e) {
+                        showError("Navigation Error", "Failed to open admin dashboard: " + e.getMessage());
+                        e.printStackTrace();
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                showError("Database Error", "Error checking admin credentials: " + e.getMessage());
+                e.printStackTrace();
                 return;
             }
 
-            String employeeQuery = "SELECT * FROM employee WHERE employee_id = ? AND password = ?";
-            prepare = connect.prepareStatement(employeeQuery);
-            prepare.setString(1, username);
-            prepare.setString(2, password);
-            result = prepare.executeQuery();
+            // Try employee login
+            try {
+                String employeeQuery = "SELECT * FROM employee WHERE employee_id = ? AND password = ?";
+                prepare = connect.prepareStatement(employeeQuery);
+                prepare.setString(1, username);
+                prepare.setString(2, password);
+                result = prepare.executeQuery();
 
-            if (result.next()) {
+                if (result.next()) {
+                    getData.username = username;
+                    showInfo("Success", "Successfully Login as Employee!");
+                    
+                    try {
+                        // Load employee dashboard
+                        login_btn.getScene().getWindow().hide();
+                        
+                        // Get the resource URL
+                        URL location = getClass().getResource("/supermarketmanagmentsystem/employeeDashboard.fxml");
+                        if (location == null) {
+                            showError("FXML Error", "Could not find employeeDashboard.fxml");
+                            return;
+                        }
+                        
+                        FXMLLoader loader = new FXMLLoader(location);
+                        Parent root = loader.load();
+                        
+                        if (root == null) {
+                            showError("FXML Error", "Could not load employeeDashboard.fxml");
+                            return;
+                        }
 
-                alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Information Message");
-                alert.setHeaderText(null);
-                alert.setContentText("Successfully Login as Employee!");
-                alert.showAndWait();
-
-                login_btn.getScene().getWindow().hide();
-                Parent root = FXMLLoader.load(getClass().getResource("employeeDashboard.fxml"));
-                Stage stage = new Stage();
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.show();
+                        Stage stage = new Stage();
+                        setupStage(root, stage);
+                        stage.show();
+                        return;
+                    } catch (Exception e) {
+                        showError("Navigation Error", "Failed to open employee dashboard: " + e.getMessage());
+                        e.printStackTrace();
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                showError("Database Error", "Error checking employee credentials: " + e.getMessage());
+                e.printStackTrace();
                 return;
             }
 
-            alert = new Alert(AlertType.ERROR);
-            alert.setTitle("Error Message");
-            alert.setHeaderText(null);
-            alert.setContentText("Invalid Username/ID or Password");
-            alert.showAndWait();
+            showError("Authentication Error", "Invalid Username/ID or Password");
 
         } catch (Exception e) {
+            showError("System Error", "An unexpected error occurred: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private void setupStage(Parent root, Stage stage) {
+        root.setOnMousePressed((MouseEvent event) -> {
+            x = event.getSceneX();
+            y = event.getSceneY();
+        });
+
+        root.setOnMouseDragged((MouseEvent event) -> {
+            stage.setX(event.getScreenX() - x);
+            stage.setY(event.getScreenY() - y);
+        });
+
+        Scene scene = new Scene(root);
+        stage.initStyle(StageStyle.UNDECORATED);
+        stage.setScene(scene);
+    }
+
+    private void showError(String title, String message) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void showInfo(String title, String message) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     public void close() {
