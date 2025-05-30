@@ -40,6 +40,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
 
 public class employeeDashboardController implements Initializable {
 
@@ -67,8 +69,8 @@ public class employeeDashboardController implements Initializable {
     @FXML private Button availability_search_btn;
     @FXML private TableView<Product> availability_table;
     @FXML private Button profile_btn;
-    @FXML private JFXComboBox<String> comboBoxCustomer;
     @FXML private Button billing_btn;
+    @FXML private JFXComboBox<String> comboBoxCustomer;
     @FXML private StackPane content_area;
     @FXML private TextField availability_search;
     @FXML private Button minimize;
@@ -87,6 +89,7 @@ public class employeeDashboardController implements Initializable {
     @FXML private Label username;
     @FXML private Button billing_checkout_btn;
     @FXML private Button biiling_calculate_btn;
+    @FXML private JFXButton loadCustomer_btn;
 
     private final ObservableList<BillItem> billItems = FXCollections.observableArrayList();
     private Connection connect;
@@ -96,38 +99,41 @@ public class employeeDashboardController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        initializeComponents();
-        setupDatabaseConnection();
-        loadInitialData();
+        connect = database.connectDb();
+        displayUsername();
+        
+        // Set billing form as default visible form
+        billing_form.setVisible(true);
+        
+        // Style billing button as active by default
+        billing_btn.setStyle("-fx-background-color: #008ca6 ; "
+                + "-fx-border-color: #013220; "
+                + "-fx-border-width: 0.01px;");
+        
+        // Initialize table columns
         setupTableColumns();
         
-        // Add listener for brand name changes
-        billing_brandName.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null && !newValue.isEmpty()) {
-                loadProductsForBrand(newValue);
-            }
-        });
+        // Set up button actions
+        logout.setOnAction(e -> logout());
+        loadCustomer_btn.setOnAction(e -> handleCustomerSubmit(e));
         
-        // Add listener for product name selection
-        billing_productName.setOnAction(e -> {
-            String selectedBrand = billing_brandName.getText();
-            String selectedProduct = billing_productName.getValue();
-            if (selectedBrand != null && selectedProduct != null) {
-                try {
-                    String sql = "SELECT price FROM product WHERE brand = ? AND product_name = ?";
-                    PreparedStatement pstmt = connect.prepareStatement(sql);
-                    pstmt.setString(1, selectedBrand);
-                    pstmt.setString(2, selectedProduct);
-                    ResultSet rs = pstmt.executeQuery();
-                    if (rs.next()) {
-                        // You can display the price somewhere if needed
-                        double price = rs.getDouble("price");
-                    }
-                } catch (SQLException ex) {
-                    showAlert(AlertType.ERROR, "Database Error", ex.getMessage());
-                }
-            }
+        // Load initial data
+        loadAllProducts();
+        loadCustomers();
+        
+        // Add listener for brand name text field
+        billing_brandName.textProperty().addListener((observable, oldValue, newValue) -> {
+            searchProducts();
         });
+    }
+
+    private void setupTableColumns() {
+        colBrandName.setCellValueFactory(new PropertyValueFactory<>("brand"));
+        colProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
+        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+        colTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
+        tblBilling.setItems(billItems);
     }
 
     private void initializeComponents() {
@@ -142,7 +148,6 @@ public class employeeDashboardController implements Initializable {
     }
 
     private void loadInitialData() {
-        loadCustomers();
         loadProfileData();
         loadAvailableProducts();
     }
@@ -156,7 +161,7 @@ public class employeeDashboardController implements Initializable {
         billing_add_btn.setOnAction(e -> handleAdd());
         billing_checkout_btn.setOnAction(e -> handleBillSubmit());
         availability_search_btn.setOnAction(e -> searchProducts());
-
+        
         minimize.setOnAction(e -> minimize());
     }
 
@@ -190,64 +195,70 @@ public class employeeDashboardController implements Initializable {
         public SimpleIntegerProperty quantityProperty() { return quantity; }
         public SimpleDoubleProperty totalProperty() { return total; }
     }
-   @FXML 
+
+    private void loadCustomers() {
+        try {
+            ObservableList<String> customers = FXCollections.observableArrayList();
+            String sql = "SELECT name FROM customers ORDER BY name";
+            try (PreparedStatement pstmt = connect.prepareStatement(sql)) {
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    customers.add(rs.getString("name"));
+                }
+                comboBoxCustomer.setItems(customers);
+            }
+        } catch (SQLException e) {
+            showAlert(AlertType.ERROR, "Database Error", "Failed to load customers: " + e.getMessage());
+        }
+    }
+
+    @FXML
     private void handleCustomerSubmit(ActionEvent event) {
+        String selectedCustomer = comboBoxCustomer.getValue();
         String name = txtCustomerName.getText().trim();
         String phone = txtCustomerPhone.getText().trim();
         String address = txtCustomerAddress.getText().trim();
         
-        if (name.isEmpty() || phone.isEmpty()) {
-            showAlert(AlertType.ERROR, "Error", "Name and Phone are required fields");
-            return;
-        }
-
-        try {
-            // First check if customer exists
-            String checkSql = "SELECT * FROM customers WHERE name = ? AND phone = ?";
-            PreparedStatement checkStmt = connect.prepareStatement(checkSql);
-            checkStmt.setString(1, name);
-            checkStmt.setString(2, phone);
-            ResultSet rs = checkStmt.executeQuery();
-
-            if (rs.next()) {
-                // Customer exists, load their details
-                lCusName.setText(rs.getString("name"));
-                lCusPhone.setText(rs.getString("phone"));
-                lCusStreet.setText(rs.getString("address"));
-                showAlert(AlertType.INFORMATION, "Customer Found", "Existing customer loaded");
-            } else {
-                // Customer doesn't exist, create new customer
-                String insertSql = "INSERT INTO customers (name, phone, address) VALUES (?, ?, ?)";
-                PreparedStatement insertStmt = connect.prepareStatement(insertSql);
-                insertStmt.setString(1, name);
-                insertStmt.setString(2, phone);
-                insertStmt.setString(3, address);
-                insertStmt.executeUpdate();
-
-                // Display the new customer's details
+        if (selectedCustomer != null) {
+            // Load existing customer
+            try {
+                String sql = "SELECT * FROM customers WHERE name = ?";
+                PreparedStatement pstmt = connect.prepareStatement(sql);
+                pstmt.setString(1, selectedCustomer);
+                ResultSet rs = pstmt.executeQuery();
+                
+                if (rs.next()) {
+                    lCusName.setText(rs.getString("name"));
+                    lCusPhone.setText(rs.getString("phone"));
+                    lCusStreet.setText(rs.getString("address"));
+                    showAlert(AlertType.INFORMATION, "Success", "Customer loaded successfully");
+                }
+            } catch (SQLException e) {
+                showAlert(AlertType.ERROR, "Database Error", e.getMessage());
+            }
+        } else if (!name.isEmpty() && !phone.isEmpty()) {
+            // Create new customer
+            try {
+                String sql = "INSERT INTO customers (name, phone, address) VALUES (?, ?, ?)";
+                PreparedStatement pstmt = connect.prepareStatement(sql);
+                pstmt.setString(1, name);
+                pstmt.setString(2, phone);
+                pstmt.setString(3, address);
+                pstmt.executeUpdate();
+                
                 lCusName.setText(name);
                 lCusPhone.setText(phone);
                 lCusStreet.setText(address);
-                showAlert(AlertType.INFORMATION, "Success", "New customer created");
+                
+                // Refresh customer list
+                loadCustomers();
+                showAlert(AlertType.INFORMATION, "Success", "New customer created successfully");
+            } catch (SQLException e) {
+                showAlert(AlertType.ERROR, "Database Error", e.getMessage());
             }
-            
-            // Clear the input fields
-            txtCustomerName.clear();
-            txtCustomerPhone.clear();
-            txtCustomerAddress.clear();
-            
-        } catch (SQLException e) {
-            showAlert(AlertType.ERROR, "Database Error", e.getMessage());
+        } else {
+            showAlert(AlertType.ERROR, "Error", "Please select a customer or enter name and phone");
         }
-    }
-
-    private void setupTableColumns() {
-        colBrandName.setCellValueFactory(new PropertyValueFactory<>("brand"));
-        colProductName.setCellValueFactory(new PropertyValueFactory<>("productName"));
-        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
-        colQuantity.setCellValueFactory(new PropertyValueFactory<>("quantity"));
-        colTotal.setCellValueFactory(new PropertyValueFactory<>("total"));
-        tblBilling.setItems(billItems);
     }
 
     @FXML
@@ -256,8 +267,8 @@ public class employeeDashboardController implements Initializable {
         String product = billing_productName.getValue();
         String quantityStr = txtQuantity.getText().trim();
 
-        if (brand.isEmpty() || product == null || quantityStr.isEmpty()) {
-            showAlert(AlertType.ERROR, "Error", "Please fill all fields");
+        if (product == null || quantityStr.isEmpty()) {
+            showAlert(AlertType.ERROR, "Error", "Please select a product and enter quantity");
             return;
         }
 
@@ -268,30 +279,30 @@ public class employeeDashboardController implements Initializable {
                 return;
             }
 
-            String sql = "SELECT price, stock, brand FROM product WHERE brand LIKE ? AND product_name = ?";
+            // Modified query to get product details by product name only
+            String sql = "SELECT price, stock, brand FROM product WHERE product_name = ?";
             PreparedStatement pstmt = connect.prepareStatement(sql);
-            pstmt.setString(1, "%" + brand + "%");
-            pstmt.setString(2, product);
-            ResultSet rs = pstmt.executeQuery();
+            pstmt.setString(1, product);
+                ResultSet rs = pstmt.executeQuery();
 
-            if (rs.next()) {
+                if (rs.next()) {
                 double price = rs.getDouble("price");
-                int stock = rs.getInt("stock");
-                String exactBrand = rs.getString("brand"); // Get the exact brand name from DB
+                    int stock = rs.getInt("stock");
+                String exactBrand = rs.getString("brand"); // Get the actual brand from DB
 
-                if (stock < quantity) {
-                    showAlert(AlertType.WARNING, "Stock Error", "Available stock: " + stock);
-                    return;
-                }
+                    if (stock < quantity) {
+                        showAlert(AlertType.WARNING, "Stock Error", "Available stock: " + stock);
+                        return;
+                    }
 
                 BillItem newItem = new BillItem(exactBrand, product, price, quantity);
                 billItems.add(newItem);
                 tblBilling.setItems(billItems);
-                updateTotals();
-                clearFields();
-            } else {
-                showAlert(AlertType.ERROR, "Error", "Product not found");
-            }
+                    updateTotals();
+                    clearFields();
+                } else {
+                    showAlert(AlertType.ERROR, "Error", "Product not found");
+                }
         } catch (NumberFormatException e) {
             showAlert(AlertType.ERROR, "Error", "Invalid quantity format");
         } catch (SQLException e) {
@@ -321,13 +332,12 @@ public class employeeDashboardController implements Initializable {
 
     private void updateTotals() {
         double subtotal = billItems.stream().mapToDouble(BillItem::getTotal).sum();
-        double cgst = subtotal * 0.09;
-        double sgst = subtotal * 0.09;
-        double total = subtotal + cgst + sgst;
+        double gst = subtotal * 0.18; // 18% GST
+        double total = subtotal + gst;
 
         lTotalAmountNum.setText(String.format("₹%.2f", subtotal));
-        cGSTAmt.setText(String.format("₹%.2f", cgst));
-        sGSTAmt.setText(String.format("₹%.2f", sgst));
+        cGSTAmt.setText(String.format("₹%.2f", gst));
+        sGSTAmt.setText(String.format("₹%.2f", gst));
         lTotalPlusTaxNum.setText(String.format("₹%.2f", total));
     }
 
@@ -459,53 +469,54 @@ public class employeeDashboardController implements Initializable {
     }
 
     // Database Operations
-    private void loadCustomers() {
+    private void loadProfileData() {
         try {
-            ObservableList<String> customers = FXCollections.observableArrayList();
-            String sql = "SELECT name FROM customers ";
-            try (PreparedStatement pstmt = connect.prepareStatement(sql)) {
+            String sql = "SELECT * FROM employee WHERE employee_id = ?";
+            PreparedStatement pstmt = connect.prepareStatement(sql);
+                pstmt.setString(1, getData.employeeId);
                 ResultSet rs = pstmt.executeQuery();
-                while (rs.next()) {
-                    customers.add(rs.getString("name"));
-                }
-                comboBoxCustomer.setItems(customers);
+            
+                if (rs.next()) {
+                    profile_employeeID.setText(rs.getString("employee_id"));
+                profile_name.setText(rs.getString("firstname") + " " + rs.getString("lastname"));
+                profile_position.setText(rs.getString("position"));
             }
         } catch (SQLException e) {
-            showAlert(AlertType.ERROR, "Database Error", "Failed to load customers: " + e.getMessage());
+            showAlert(AlertType.ERROR, "Database Error", e.getMessage());
         }
     }
 
- public void loadAvailableProducts() {
-    try {
-        ObservableList<Product> productList = FXCollections.observableArrayList();
-        String sql = "SELECT brand, product_name, stock, price FROM product";
-        PreparedStatement pstmt = connect.prepareStatement(sql);
-        ResultSet rs = pstmt.executeQuery();
-        while (rs.next()) {
-            productList.add(new Product(
-                rs.getString("brand"),
-                rs.getString("product_name"),
-                rs.getInt("stock"),
-                rs.getDouble("price")
-            ));
+    public void loadAvailableProducts() {
+        try {
+            ObservableList<Product> productList = FXCollections.observableArrayList();
+            String sql = "SELECT brand, product_name, stock, price FROM product";
+            PreparedStatement pstmt = connect.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                productList.add(new Product(
+                    rs.getString("brand"),
+                    rs.getString("product_name"),
+                    rs.getInt("stock"),
+                    rs.getDouble("price")
+                ));
+            }
+            availability_table.setItems(productList);
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert(AlertType.ERROR, "Database Error", e.getMessage());
         }
-        availability_table.setItems(productList);
-        
-    } catch (SQLException e) {
-        e.printStackTrace(); // Log the error
-        showAlert(AlertType.ERROR, "Database Error", e.getMessage());
     }
-}
     
      @FXML
     private void searchProducts() {
         String searchText = billing_brandName.getText().trim();
         
         try {
-            String sql = "SELECT DISTINCT brand, product_name FROM product WHERE brand LIKE ? OR product_name LIKE ? ORDER BY brand, product_name";
+            // Modified query to be more flexible with brand name
+            String sql = "SELECT DISTINCT product_name FROM product WHERE product_name LIKE ? ORDER BY product_name";
             PreparedStatement pstmt = connect.prepareStatement(sql);
             pstmt.setString(1, "%" + searchText + "%");
-            pstmt.setString(2, "%" + searchText + "%");
             ResultSet rs = pstmt.executeQuery();
             
             ObservableList<String> products = FXCollections.observableArrayList();
@@ -545,23 +556,6 @@ public class employeeDashboardController implements Initializable {
         }
     }
 
-    private void loadProfileData() {
-        try {
-            String sql = "SELECT * FROM employee WHERE employee_id = ?";
-            try (PreparedStatement pstmt = connect.prepareStatement(sql)) {
-                pstmt.setString(1, getData.employeeId);
-                ResultSet rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    profile_employeeID.setText(rs.getString("employee_id"));
-                    profile_name.setText(rs.getString("first_name") + " " + rs.getString("last_name"));
-                   
-                }
-            }
-        } catch (SQLException e) {
-            showAlert(AlertType.ERROR, "Database Error", e.getMessage());
-        }
-    }
-
     // Other Methods
     public void displayUsername() {
         username.setText(getData.username);
@@ -580,24 +574,30 @@ public class employeeDashboardController implements Initializable {
 
     public void logout() {
         try {
-            Alert confirmation = new Alert(AlertType.CONFIRMATION);
-            confirmation.setTitle("Logout Confirmation");
-            confirmation.setHeaderText(null);
-            confirmation.setContentText("Are you sure you want to logout?");
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Logout Confirmation");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to logout?");
 
-            Optional<ButtonType> result = confirmation.showAndWait();
+            Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
+                // Get the current stage
                 Stage stage = (Stage) logout.getScene().getWindow();
+                
+                // Close the current window
                 stage.close();
 
+                // Load the login form
                 Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+                Scene scene = new Scene(root);
                 Stage loginStage = new Stage();
                loginStage.initStyle(StageStyle.UNDECORATED);
-                loginStage.setScene(new Scene(root));
+                loginStage.setScene(scene);
                 loginStage.show();
             }
         } catch (Exception e) {
             e.printStackTrace();
+            showAlert(AlertType.ERROR, "Error", "Failed to logout: " + e.getMessage());
         }
     }
 
@@ -627,5 +627,24 @@ public class employeeDashboardController implements Initializable {
         public String getProductName() { return productName; }
         public int getStock() { return stock; }
         public double getPrice() { return price; }
+    }
+
+    // Add this method to load all products when the form initializes
+    private void loadAllProducts() {
+        try {
+            String sql = "SELECT DISTINCT product_name FROM product ORDER BY product_name";
+            PreparedStatement pstmt = connect.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            
+            ObservableList<String> products = FXCollections.observableArrayList();
+            
+            while (rs.next()) {
+                products.add(rs.getString("product_name"));
+            }
+            
+            billing_productName.setItems(products);
+        } catch (SQLException e) {
+            showAlert(AlertType.ERROR, "Database Error", e.getMessage());
+        }
     }
 }

@@ -6,7 +6,6 @@
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.Cursor?>
 <?import javafx.scene.layout.*?>
 
 <StackPane prefHeight="454.0" prefWidth="662.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="supermarketmanagmentsystem.FXMLDocumentController">
@@ -16,48 +15,34 @@
             <AnchorPane fx:id="super_form" prefHeight="454.0" prefWidth="328.0" styleClass="left-form" stylesheets="@loginDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="334.0" AnchorPane.topAnchor="0.0">
                <children>
                   <FontAwesomeIcon fill="#333333" glyphName="SHOPPING_CART" layoutX="98.0" layoutY="205.0" size="10em" text="" />
-                  <Label layoutX="54.0" layoutY="227.0" text="Super Market Managment" textFill="#333333">
+                  <Label layoutX="54.0" layoutY="227.0" text="Super Market Management" textFill="#333333">
                      <font>
                         <Font name="Tahoma" size="20.0" />
                      </font>
                   </Label>
-               </children></AnchorPane>
-            <AnchorPane fx:id="admin_form" focusTraversable="true" layoutX="363.0" prefHeight="458.0" prefWidth="334.0" styleClass="right-form" stylesheets="@loginDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="363.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               </children>
+            </AnchorPane>
+            
+            <AnchorPane fx:id="login_form" prefHeight="458.0" prefWidth="334.0" styleClass="right-form" stylesheets="@loginDesign.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="363.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <FontAwesomeIcon glyphName="USER" layoutX="121.0" layoutY="135.0" size="8em" />
-                  <Label layoutX="95.0" layoutY="152.0" text="Admin Sign IN">
+                  <Label layoutX="136.0" layoutY="152.0" text="Login">
                      <font>
                         <Font name="Berlin Sans FB" size="25.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="admin_username" focusTraversable="false" layoutX="54.0" layoutY="228.0" onAction="#adminLogin" onDragDetected="#adminLogin" prefHeight="31.0" prefWidth="220.0" promptText="Username" styleClass="textfield" stylesheets="@loginDesign.css" AnchorPane.leftAnchor="57.0" AnchorPane.rightAnchor="54.60000000000002" />
-                  <PasswordField fx:id="admin_password" focusTraversable="false" layoutX="46.0" layoutY="283.4" onAction="#adminLogin" prefHeight="32.0" prefWidth="228.0" promptText="Password" styleClass="textfield" stylesheets="@loginDesign.css" AnchorPane.bottomAnchor="143.0" AnchorPane.leftAnchor="57.0" AnchorPane.rightAnchor="54.0" AnchorPane.topAnchor="283.0" />
-                  <Button fx:id="admin_login" layoutX="116.0" layoutY="333.0" mnemonicParsing="false" onAction="#adminLogin" prefHeight="42.0" prefWidth="99.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="login" AnchorPane.bottomAnchor="80.59999999999991" AnchorPane.leftAnchor="116.0" AnchorPane.rightAnchor="113.79999999999995" AnchorPane.topAnchor="333.0" />
-                  <Hyperlink fx:id="admin_hyperlink" layoutX="83.0" layoutY="407.0" onAction="#switchForm" stylesheets="@loginDesign.css" text="Login Employee Account?" AnchorPane.bottomAnchor="25.399999999999977">
-                     </Hyperlink>
-                  <Button fx:id="close" layoutX="272.0" layoutY="2.0" mnemonicParsing="false" onAction="#close" prefHeight="30.0" prefWidth="62.0" styleClass="close" stylesheets="@loginDesign.css" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  
+                  <TextField fx:id="login_username" focusTraversable="false" layoutX="54.0" layoutY="228.0" onAction="#handleLogin" prefHeight="31.0" prefWidth="220.0" promptText="Username" styleClass="textfield" stylesheets="@loginDesign.css" />
+                  
+                  <PasswordField fx:id="login_password" focusTraversable="false" layoutX="54.0" layoutY="283.4" onAction="#handleLogin" prefHeight="31.0" prefWidth="220.0" promptText="Password" styleClass="textfield" stylesheets="@loginDesign.css" />
+                  
+                  <Button fx:id="login_btn" layoutX="116.0" layoutY="335.0" mnemonicParsing="false" onAction="#handleLogin" prefHeight="42.0" prefWidth="99.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="Login" />
+                  
+                  <Button fx:id="close" layoutX="283.0" layoutY="0.0" mnemonicParsing="false" onAction="#close" prefHeight="30.0" prefWidth="62.0" styleClass="close" stylesheets="@loginDesign.css">
                      <graphic>
-                        <FontAwesomeIcon glyphName="CLOSE" onDragDetected="#close" size="1.2em" />
-                     </graphic></Button>
-               </children></AnchorPane>
-            <AnchorPane fx:id="employee_form" focusTraversable="true" layoutX="344.0" layoutY="10.0" prefHeight="458.0" prefWidth="334.0" styleClass="right-form" stylesheets="@loginDesign.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <children>
-                  <FontAwesomeIcon glyphName="USER" layoutX="120.0" layoutY="136.0" size="8em" text="" />
-                  <Label layoutX="80.0" layoutY="153.0" text="Employee Sign In" textFill="#262728">
-                     <font>
-                        <Font name="Berlin Sans FB" size="25.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="employee_id" focusTraversable="false" layoutX="59.0" layoutY="229.0" onAction="#employeeLogin" prefHeight="30.0" prefWidth="220.0" promptText="Employee ID" styleClass="textfield" stylesheets="@loginDesign.css" />
-                  <PasswordField fx:id="employee_password" focusTraversable="false" layoutX="59.0" layoutY="280.0" onAction="#employeeLogin" prefHeight="30.0" prefWidth="220.0" promptText="Password" styleClass="textfield" stylesheets="@loginDesign.css" AnchorPane.bottomAnchor="143.0" />
-                  <Button fx:id="employee_login" layoutX="113.0" layoutY="331.0" mnemonicParsing="false" onAction="#employeeLogin" prefHeight="42.0" prefWidth="100.0" styleClass="login-btn" stylesheets="@loginDesign.css" text="login" AnchorPane.bottomAnchor="81.0" AnchorPane.leftAnchor="113.0" AnchorPane.rightAnchor="116.19999999999993" />
-                  <Hyperlink fx:id="employee_hyperlink" layoutX="93.0" layoutY="407.0" onAction="#switchForm" stylesheets="@loginDesign.css" text="Login Admin Account?" AnchorPane.bottomAnchor="25.0">
-                     
-                  </Hyperlink>
-                  <Button fx:id="close" layoutX="272.0" layoutY="3.0" mnemonicParsing="false" onAction="#close" prefHeight="30.0" prefWidth="62.0" styleClass="close" stylesheets="@loginDesign.css" textFill="#dd1616" wrapText="true" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <graphic>
-                        <FontAwesomeIcon glyphName="CLOSE" onDragDetected="#close" size="1.2em" />
-                     </graphic></Button>
+                        <FontAwesomeIcon glyphName="CLOSE" size="1.2em" />
+                     </graphic>
+                  </Button>
                </children>
             </AnchorPane>
          </children>
